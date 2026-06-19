@@ -23,7 +23,9 @@ const DEFAULT_LAP_DATA: SpeedLapData[] = [
 
 // Vertical gap, in px, carved out between the avg (bottom) and max (top) bar segments.
 const BAR_SEGMENT_GAP = 4
+const TOOLTIP_EDGE_THRESHOLD = 15;
 
+type TooltipAlign = "left" | "right";
 type SpeedView = 'avg' | 'max'
 
 export function SpeedChart({
@@ -59,7 +61,24 @@ export function SpeedChart({
     { text: 'AVG',  avg: true  },
     { text: '0 KM/H',    avg: false },
   ]
+   const activeLapPct =
+    activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null;
 
+  let tooltipAlign: TooltipAlign = "right";
+  if (activeLapPct !== null) {
+    if (activeLapPct <= TOOLTIP_EDGE_THRESHOLD) {
+      tooltipAlign = "left";
+    } else if (activeLapPct >= 100 - TOOLTIP_EDGE_THRESHOLD) {
+      tooltipAlign = "right";
+    }
+  }
+
+  const tooltipAlignClass =
+    tooltipAlign === "left"
+      ? styles.tooltipAlignLeft
+      : tooltipAlign === "right"
+        ? styles.tooltipAlignRight
+        : styles.tooltipAlignRight; 
   return (
     <div className={styles.card}>
 
@@ -119,12 +138,12 @@ export function SpeedChart({
 
             {/* MAX reference line */}
             <div className={styles.refLine} style={{ bottom: `${maxLineBottom}%` }}>
-              <span className={styles.refLineLabel}>{maxLine}</span>
+              <span className={styles.refLineLabel}>{maxLine}<br></br>KM/H</span>
             </div>
 
             {/* AVG reference line */}
             <div className={styles.refLine} style={{ bottom: `${avgLineBottom}%` }}>
-              <span className={styles.refLineLabel}>{avgLine}</span>
+              <span className={styles.refLineLabel}>{avgLine}<br></br>KM/H</span>
             </div>
 
             {/* Bars */}
@@ -167,12 +186,16 @@ export function SpeedChart({
             {/* Tooltip */}
             {activeLap !== null && (
               <div
-                className={styles.tooltip}
+                className={`${styles.tooltip} ${tooltipAlignClass}`}
                 style={{ left: `${((activeLap + 0.5) / total) * 100}%` }}
               >
                 <div className={styles.tooltipTitle}>Lap {activeLap + 1}</div>
+                {view === 'max' && (
                 <div className={styles.tooltipTeal}>Max: {lapData[activeLap].maxSpeed} {unit}</div>
+                )}
+                {view === 'avg' && (
                   <div className={styles.tooltipTeal}>Avg: {lapData[activeLap].avgSpeed} {unit}</div>
+                )}
               </div>
             )}
           </div>

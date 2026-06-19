@@ -265,10 +265,10 @@ export function ThrottleBrakeChart({
                 >
                   <div className={styles.tooltipTitle}>Lap {activeLap + 1}</div>
                   <div className={styles.tooltipTeal}>
-                    Throttle: {lapData[activeLap].throttle}%
+                    Acce: {lapData[activeLap].throttle}%
                   </div>
                   <div className={styles.tooltipMuted}>
-                    Brake: {lapData[activeLap].brake}%
+                    Decel: {lapData[activeLap].brake}%
                   </div>
                 </div>
               )}

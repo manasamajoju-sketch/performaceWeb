@@ -250,10 +250,10 @@ export function SpikesChart({
             >
               <div className={styles.tooltipTitle}>Lap {activeLap + 1}</div>
               <div className={styles.tooltipTeal}>
-                Throttle avg: {lapData[activeLap].throttleAvg}
+                Acce: {lapData[activeLap].throttleAvg}
               </div>
               <div className={styles.tooltipMuted}>
-                Brake avg: {lapData[activeLap].brakeAvg}
+                Decel: {lapData[activeLap].brakeAvg}
               </div>
             </div>
           )}
