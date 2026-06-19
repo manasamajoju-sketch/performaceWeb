@@ -1,0 +1,262 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Card ─────────────────────────────────────────────────────────────────────
+.card {
+  background-color: $color-card;
+  border-radius: $radius-card;
+  padding: $spacing-20 $spacing-20 $spacing-16;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.divider {
+  height: 1px;
+  background-color: $color-divider;
+  margin: $spacing-12 0;
+}
+
+// ─── Stat Row ─────────────────────────────────────────────────────────────────
+.statRow {
+  @include flex-row(center, $spacing-12);
+  margin-bottom: $spacing-4;
+}
+
+.statLeft {
+  flex: 1;
+  align-items: flex-start;
+  @include flex-column($spacing-2);
+}
+
+.statLabel {
+  color: $color-text;
+  font-size: 22px;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.01em;
+}
+
+.statUnit {
+  @include label-uppercase;
+  color: $color-text-muted;
+}
+
+// AVG button (center)
+.statAvgBtn {
+  @include flex-column($spacing-2);
+  align-items: center;
+  min-width: 80px;
+  background: none;
+  border: none;
+  padding: $spacing-4 $spacing-8;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: $font-base;
+
+  &:hover { background: rgba(255, 255, 255, 0.05); }
+}
+// MAX button (right)
+.statMaxBtn {
+  @include flex-column($spacing-2);
+  align-items: flex-end;
+  min-width: 52px;
+  background: none;
+  border: none;
+  border-left: 1px solid $color-divider;
+  padding: $spacing-4 $spacing-4 $spacing-4 $spacing-12;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: $font-base;
+
+  &:hover { background: rgba(255, 255, 255, 0.05); }
+}
+
+// Numbers
+.statNumber {
+  font-size: 26px;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: $color-text-muted;
+  transition: color 0.15s;
+}
+
+.statNumberActive {
+  color: $color-teal;
+}
+
+// Sub labels (AVG / MAX)
+.statSubLabel {
+  @include label-uppercase;
+  color: $color-text-muted;
+  transition: color 0.15s;
+}
+
+.statSubLabelActive {
+  color: $color-teal;
+}
+
+// ─── Chart Layout ─────────────────────────────────────────────────────────────
+.chartWrapper {
+  @include flex-column($spacing-4);
+}
+
+.chartOuter {
+  position: relative;
+  height: clamp(160px, 30vw, 320px);
+}
+
+.yAxis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  @include flex-column;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yLabel {
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  padding-right: $spacing-6;
+  line-height: 1;
+}
+.yLabelAvg {
+  color: #2e3240;   // lighter teal
+  -webkit-text-stroke: 1px $color-teal;
+  paint-order: stroke fill;
+}
+
+.chartArea {
+  position: absolute;
+  left: $spacing-32;
+  right: $spacing-32;
+  top: 0;
+  bottom: 0;
+}
+
+// ─── Avg / Max reference lines ────────────────────────────────────────────────
+.refLine {
+  @include dashed-line;
+}
+
+.refLineLabel {
+  position: absolute;
+  right: -$spacing-32;
+  top: -8px;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  width: $spacing-32;
+  text-align: right;
+}
+
+// ─── Scrollable bars ──────────────────────────────────────────────────────────
+.barsScroll {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: $color-divider transparent;
+
+  &::-webkit-scrollbar { height: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background-color: $color-divider; border-radius: 2px; }
+}
+
+.barsContainer {
+  display: flex;
+  align-items: flex-end;   // all bars grow from bottom
+  height: 100%;
+//   gap: 5px;  
+gap:39.5px;              // gap between lap columns — up to 32 fit in viewport, rest scroll
+  min-width: max-content;
+  padding-bottom: 0;
+}
+
+.barCol {
+  position: relative;
+  width: 4px;
+  min-width: 4px;
+  height: 100%;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.barColFaded  { opacity: 0.35; }
+.barColActive { opacity: 1; }
+
+// Top segment — max speed. Sits above the avg segment with a 2px gap
+// (bottom/height are calculated per-bar inline since they depend on data).
+.maxBar {
+  position: absolute;
+  left: 0;
+  width: 8px;
+  min-width: 8px;
+  border-radius: 10px;
+  background-color: #00C8DC;
+}
+
+// Bottom segment — avg speed. Always anchored to the baseline.
+.avgBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 8px;
+  min-width: 8px;
+  border-radius: 10px;
+  background-color: #14465F;
+}
+
+.avgBarMax {
+  background-color: #00C8DC;
+}
+
+.barActive {
+  opacity: 1;
+}
+
+.barMuted {
+  opacity: 0.35;
+}
+
+// ─── X-Axis ───────────────────────────────────────────────────────────────────
+.xAxis {
+  @include flex-between;
+  padding: 0 $spacing-32;
+}
+
+.xLabel {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+.tooltip {
+  position: absolute;
+  top: $spacing-8;
+  transform: translateX(-50%);
+  background-color: $color-tooltip-bg;
+  border: 1px solid $color-teal;
+  border-radius: $radius-tooltip;
+  padding: $spacing-6 $spacing-10;
+  font-size: 11px;
+  color: $color-text;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+  line-height: 1.7;
+}
+
+.tooltipTitle  { font-weight: $font-weight-bold; margin-bottom: 1px; }
+.tooltipTeal   { color: $color-teal; }
+.tooltipMuted  { color: $color-text-muted; }

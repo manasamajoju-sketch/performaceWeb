@@ -1,0 +1,207 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Wrapper ─────────────────────────────────────────────────────────────────
+// chartWrapper must have a real height so ResizeObserver gets non-zero dims
+.chartWrapper {
+  @include flex-column($spacing-4);
+  width: 100%;
+}
+
+.chartOuter {
+  position: relative;
+  // same clamp as the bar chart so heights match when toggling
+  height: clamp(160px, 30vw, 320px);
+  width: 100%;
+}
+
+// ─── Y-axis ───────────────────────────────────────────────────────────────────
+.yAxis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  @include flex-column;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yLabel {
+  color: #B8B8B8;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  padding-right: $spacing-6;
+  line-height: 1;
+}
+
+.yLabelAvg {
+  color: #555555;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.18);
+  paint-order: stroke fill;
+}
+
+// AVG labels are pulled out of the evenly-spaced flex flow and pinned via
+// inline `top` to the same pixel height as their avg dashed line
+// (throttleAvgY / brakeAvgY), so they always sit right at the line.
+.yLabelAvgPositioned {
+  position: absolute;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  padding-right: $spacing-6;
+}
+
+// ─── Chart area ───────────────────────────────────────────────────────────────
+// This element is the ref target — it must fill the remaining space
+.chartArea {
+  position: absolute;
+  left: $spacing-32;
+  right: $spacing-32;
+  top: 0;
+  bottom: 0;
+  // do NOT set overflow:hidden — lets tooltip escape
+}
+
+// ─── Centre line ──────────────────────────────────────────────────────────────
+.centerLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.10);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+// ─── AVG dashed lines ─────────────────────────────────────────────────────────
+.avgLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px dashed #8D8D8D;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.avgLineLabel {
+  position: absolute;
+  right: -$spacing-32;
+  top: -8px;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  width: $spacing-32;
+  text-align: right;
+}
+
+// ─── SVG layer ────────────────────────────────────────────────────────────────
+.svgLayer {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  z-index: 3;
+}
+
+// ─── Connector line (selected lap) ────────────────────────────────────────────
+// Joins the throttle dot to the brake dot for the active lap, per dev note.
+.connectorLine {
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1.5px;
+  pointer-events: none;
+}
+
+// ─── Dots ─────────────────────────────────────────────────────────────────────
+.dotTeal {
+  fill: $color-teal;
+  cursor: pointer;
+  transition: opacity 0.15s, r 0.15s;
+
+  &:hover { opacity: 0.85; }
+}
+
+.dotDark {
+  fill: #3a5a6a;
+  cursor: pointer;
+  transition: opacity 0.15s, r 0.15s;
+
+  &:hover { opacity: 0.85; }
+}
+
+.dotFaded {
+  opacity: 0.2;
+}
+
+// Active radius is bumped 4px → 8px (see render logic) and gets a
+// matching-color stroke ring so the selected dot reads clearly.
+.dotActive {
+  fill: $color-teal-hover;
+  stroke: $color-teal;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 5px $color-teal);
+}
+
+.dotActiveAlt {
+  fill: #5a8a9a;
+  stroke: #3a5a6a;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 5px #3a5a6a);
+}
+
+// ─── X-axis ───────────────────────────────────────────────────────────────────
+.xAxis {
+  @include flex-between;
+  padding: 0 $spacing-32;
+}
+
+.xLabel {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+// ─── Lap indicator (vertical guide for active lap) ────────────────────────────
+.lapIndicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  z-index: 1;
+  transform: translateX(-50%);
+}
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+// Aligned left/right (instead of centered) near the chart edges so it
+// doesn't get clipped when the active lap is close to lap 1 or the last lap.
+.tooltip {
+  position: absolute;
+  top: 8px;
+  background-color: $color-tooltip-bg;
+  border: 1px solid $color-teal;
+  border-radius: $radius-tooltip;
+  padding: $spacing-6 $spacing-10;
+  font-size: 11px;
+  color: $color-text;
+  z-index: 20;
+  pointer-events: none;
+  white-space: nowrap;
+  line-height: 1.7;
+}
+
+.tooltipAlignLeft {
+  transform: translateX(0);
+}
+
+.tooltipAlignRight {
+  transform: translateX(-100%);
+}
+
+.tooltipTitle  { font-weight: $font-weight-bold; margin-bottom: 1px; }
+.tooltipTeal   { color: $color-teal; }
+.tooltipMuted  { color: $color-text-muted; }

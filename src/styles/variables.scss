@@ -1,0 +1,43 @@
+// ─── Colors ───────────────────────────────────────────────────────────────────
+$color-bg:           #1a1d24;
+$color-card:         #ffffff;
+$color-teal:         #00C8DC;
+$color-teal-hover:   #55eeff;
+$color-bar-dark:     #14465F;
+$color-bar-hover:    #5a6075;
+$color-divider:      #2e3240;
+$color-text:         #7a8099;
+$color-text-muted:   #14465F;
+$color-avg-line:     #7a8099;
+$color-tooltip-bg:   #ffffff;
+
+// ─── Typography ───────────────────────────────────────────────────────────────
+$font-base:          'Inter', 'Helvetica Neue', Arial, sans-serif;
+$font-size-xs:       9px;
+$font-size-sm:       10px;
+$font-size-md:       15px;
+$font-size-stat:     26px;
+$font-weight-medium: 500;
+$font-weight-semi:   600;
+$font-weight-bold:   700;
+
+// ─── Spacing ──────────────────────────────────────────────────────────────────
+$spacing-2:   2px;
+$spacing-4:   4px;
+$spacing-6:   6px;
+$spacing-8:   8px;
+$spacing-10:  10px;
+$spacing-12:  12px;
+$spacing-16:  16px;
+$spacing-20:  20px;
+$spacing-24:  24px;
+$spacing-32:  32px;
+
+// ─── Chart ────────────────────────────────────────────────────────────────────
+$chart-height: 160px;
+$bar-gap:      2px;
+
+// ─── Radii ────────────────────────────────────────────────────────────────────
+$radius-card:    12px;
+$radius-tooltip: 6px;
+$radius-bar:     10px;

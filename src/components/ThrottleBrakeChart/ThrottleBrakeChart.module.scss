@@ -1,0 +1,271 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.card {
+  background-color: $color-card;
+  border-radius: $radius-card;
+  padding: $spacing-20 $spacing-20 $spacing-16;
+  width: 100%;
+  max-width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.divider {
+  height: 1px;
+  background-color: $color-divider;
+  margin: $spacing-12 0;
+}
+
+// ─── Stat Row ─────────────────────────────────────────────────────────────────
+.statRow { @include flex-row(center, $spacing-12); }
+
+.statLeft {
+  flex: 1;
+  align-items: flex-start;
+  @include flex-column($spacing-2);
+}
+
+.statLabel {
+  color: $color-text;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.01em;
+}
+
+.statSublabel {
+  @include label-uppercase;
+  color: $color-text-muted;
+}
+
+.statCenter {
+  @include flex-column($spacing-2);
+  align-items: center;
+  min-width: 90px;
+  background: none;
+  border: none;
+  padding: $spacing-4 $spacing-8;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: $font-base;
+  &:hover { background: rgba(255, 255, 255, 0.05); }
+}
+.statCenterActive {
+  &:hover { background: rgba(51, 204, 204, 0.12); }
+}
+
+.statRight {
+  @include flex-column($spacing-2);
+  align-items: flex-end;
+  min-width: 52px;
+  background: none;
+  border: none;
+  border-left: 1px solid $color-divider;
+  padding: $spacing-4 $spacing-4 $spacing-4 $spacing-12;
+  border-radius: 0 6px 6px 0;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: $font-base;
+  &:hover { background: rgba(255, 255, 255, 0.05); }
+}
+.statRightActive {
+  &:hover { background: rgba(51, 204, 204, 0.12); }
+}
+
+.statSublabelSmall {
+  @include label-uppercase;
+  color: $color-text-muted;
+  transition: color 0.15s;
+}
+.statSublabelSmallActive { color: $color-teal; }
+
+.statPercent {
+  @include stat-number;
+  color: $color-text-muted;
+  transition: color 0.15s;
+}
+.statPercentActive { color: $color-teal; }
+
+.statSpikes {
+  @include stat-number;
+  color: $color-text-muted;
+  transition: color 0.15s;
+}
+.statSpikesActive { color: $color-teal; }
+
+// ─── Chart Layout ─────────────────────────────────────────────────────────────
+.chartWrapper { @include flex-column($spacing-4); }
+
+.chartOuter {
+  position: relative;
+  height: clamp(160px, 30vw, 320px);
+}
+
+.yAxis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  pointer-events: none;
+  z-index: 3;
+  // remove flex — labels are absolutely positioned now
+}
+
+.yLabel {
+  position: absolute;
+  right: $spacing-6;
+  color: #B8B8B8;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  line-height: 1;
+  transform: translateY(50%); // center label on its line
+}
+
+.yLabelAvg {
+  color: #555555;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.18);
+  paint-order: stroke fill;
+}
+
+.chartArea {
+  position: absolute;
+  left: $spacing-32;
+  right: $spacing-32;
+  top: 0; bottom: 0;
+  // overflow: hidden;
+}
+
+// ─── Avg lines ────────────────────────────────────────────────────────────────
+.avgLine { @include dashed-line; }
+
+.avgLineLabel {
+  position: absolute;
+  right: -$spacing-32;
+  top: -8px;
+  color: #8D8D8D;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  width: $spacing-32;
+  text-align: right;
+}
+
+// ─── Scrollable bars ──────────────────────────────────────────────────────────
+.barsScroll {
+  position: absolute;
+  inset: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: $color-divider transparent;
+  &::-webkit-scrollbar { height: 3px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background-color: $color-divider; border-radius: 2px; }
+}
+
+.barsContainer {
+  display: flex;
+  align-items: flex-end;   // ← all bars from BOTTOM
+  height: 100%;
+  // gap: 5px;
+  gap: 22px;
+  min-width: max-content;
+}
+
+// ─── Bar group ────────────────────────────────────────────────────────────────
+.barGroup {
+  min-width: 4px;
+  flex: 1;
+  max-width: 24px;
+  height: 100%;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  display: flex;
+  align-items: flex-end;
+}
+
+.barGroupFaded  { opacity: 0.35; }
+.barGroupActive { opacity: 1; }
+
+// barWrapper fills the column height, both bars anchor to its bottom
+.barWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+// Teal throttle bar — top segment. `bottom` is set per-bar inline to
+// `brake%` so it picks up exactly where the brake bar ends; together the
+// two segments always fill the full 0–100% column (throttle = 100 - brake).
+.tealBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background-color: $color-teal;
+  border-radius: $radius-bar;
+  transition: height 0.4s ease, bottom 0.4s ease, background-color 0.15s;
+  z-index: 1;
+
+  .barGroup:hover & { background-color: $color-teal-hover; }
+}
+
+// Dark brake bar — bottom segment, anchored to the baseline.
+.darkBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $color-bar-dark;
+  border-radius: $radius-bar;
+  transition: height 0.4s ease, background-color 0.15s;
+  z-index: 2;
+
+  .barGroup:hover & { background-color: $color-bar-hover; }
+}
+
+// ─── X-Axis ───────────────────────────────────────────────────────────────────
+.xAxis {
+  @include flex-between;
+  padding: 0 $spacing-32;
+}
+
+.xLabel {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+.tooltip {
+  position: absolute;
+  top: $spacing-8;
+  background-color: $color-tooltip-bg;
+  border: 1px solid $color-teal;
+  border-radius: $radius-tooltip;
+  padding: $spacing-6 $spacing-10;
+  font-size: 11px;
+  // color: $color-text;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+  line-height: 1.7;
+}
+
+// Active lap is near the left edge — anchor the tooltip's left edge to the
+// indicator line instead of centering, so it grows rightward and never
+// clips against the left side of the chart.
+.tooltipAlignLeft {
+  transform: translateX(8px);
+}
+
+// Active lap is near the right edge — anchor the tooltip's right edge to
+// the indicator line, so it grows leftward and never clips against the
+// right side of the chart.
+.tooltipAlignRight {
+  transform: translateX(calc(-100% - 8px));
+}
+
+.tooltipTitle  { font-weight: $font-weight-bold; margin-bottom: 1px; color: #8D8D8D }
+.tooltipTeal   { color: $color-teal; }
+.tooltipMuted  { color: $color-text-muted; }

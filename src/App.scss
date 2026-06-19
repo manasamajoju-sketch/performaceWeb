@@ -1,0 +1,343 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+$bg:           #ffffff;
+$surface:      #f5f6f9;
+$surface-2:    #f0f2f8;
+$cyan:         #0d0000;
+$cyan-dim:     rgba(255, 255, 255, 0.08);
+$cyan-glow:    rgba(255, 255, 255, 0.25);
+$amber:        #33cccc;
+$amber-dim:    rgba(51, 204, 204, 0.15);
+$text:         #01040d;
+$text-muted:   #01050d;
+$text-dim:     #00030b;
+$border:       rgba(255, 255, 255, 0.06);
+$border-cyan:  rgba(255, 255, 255, 0.15);
+
+$font-hud:     'Rajdhani', sans-serif;
+$font-data:    'Inter', sans-serif;
+
+// ─── App shell ────────────────────────────────────────────────────────────────
+.app {
+  min-height: 100vh;
+  background-color: $bg;
+  font-family: $font-data;
+  color: $text;
+  position: relative;
+  overflow-x: hidden;
+}
+
+// ─── Scanlines ────────────────────────────────────────────────────────────────
+// .app__scanlines {
+//   position: fixed;
+//   inset: 0;
+//   background: repeating-linear-gradient(
+//     0deg,
+//     transparent,
+//     transparent 2px,
+//     rgba(0, 0, 0, 0.08) 2px,
+//     rgba(0, 0, 0, 0.08) 4px
+//   );
+//   pointer-events: none;
+//   z-index: 100;
+// }
+
+// ─── Grid ─────────────────────────────────────────────────────────────────────
+// .app__grid {
+//   position: fixed;
+//   inset: 0;
+//   background-image:
+//     linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+//     linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+//   background-size: 40px 40px;
+//   pointer-events: none;
+//   z-index: 0;
+// }
+
+// ─── HUD Header ───────────────────────────────────────────────────────────────
+.hud {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: linear-gradient(180deg, rgba(0, 212, 255, 0.06) 0%, transparent 100%);
+  border-bottom: 1px solid $border-cyan;
+
+  // top accent line
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, $cyan, transparent);
+  }
+}
+
+.hud__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: $font-hud;
+}
+
+.hud__session {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: $cyan;
+}
+
+.hud__divider {
+  width: 1px;
+  height: 14px;
+  background: $border-cyan;
+}
+
+.hud__track {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: $text-muted;
+  text-transform: uppercase;
+}
+
+.hud__center {
+  font-family: $font-hud;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: $text;
+  text-transform: uppercase;
+  // subtle glow
+  text-shadow: 0 0 20px $cyan-glow;
+}
+
+.hud__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-family: $font-hud;
+}
+
+.hud__sep {
+  width: 1px;
+  height: 24px;
+  background: $border;
+}
+
+.hud__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.hud__stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: $text;
+  letter-spacing: 0.04em;
+
+  &.live {
+    color: $amber;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+}
+
+.hud__stat-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: $text-muted;
+  text-transform: uppercase;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+// ─── Driver Strip ─────────────────────────────────────────────────────────────
+.driver-strip {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  // left cyan accent
+  border-left: 3px solid $cyan;
+}
+
+.driver-strip__number {
+  font-family: $font-hud;
+  font-size: 36px;
+  font-weight: 700;
+  color: $cyan;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  min-width: 48px;
+  text-shadow: 0 0 24px $cyan-glow;
+}
+
+.driver-strip__info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.driver-strip__name {
+  font-family: $font-hud;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: $text;
+  text-transform: uppercase;
+}
+
+.driver-strip__team {
+  font-size: 11px;
+  font-weight: 500;
+  color: $text-muted;
+  letter-spacing: 0.04em;
+}
+
+.driver-strip__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Badges
+.badge {
+  font-family: $font-hud;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 3px;
+
+  &--pos {
+    background: $cyan-dim;
+    color: $cyan;
+    border: 1px solid $border-cyan;
+  }
+
+  &--gap {
+    background: rgba(255, 255, 255, 0.04);
+    color: $text-muted;
+    border: 1px solid $border;
+  }
+
+  &--tire {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0;
+  }
+}
+
+.tire--medium {
+  background: $amber-dim;
+  color: $amber;
+  border: 1px solid rgba(255, 107, 0, 0.4);
+}
+
+// ─── Dashboard ────────────────────────────────────────────────────────────────
+.dashboard {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 24px;
+  gap: 20px;
+}
+
+// ─── Panel wrapper ────────────────────────────────────────────────────────────
+.panel {
+  position: relative;
+
+  // top cyan accent bar
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, $cyan, rgba(0, 212, 255, 0.2), transparent);
+    border-radius: 2px 2px 0 0;
+    z-index: 1;
+  }
+
+  // override card background to match our deeper surface
+  > * {
+    background-color: $surface !important;
+    border: 1px solid $border !important;
+    border-top: none !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+}
+
+.panel__label {
+  font-family: $font-hud;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: $cyan;
+  text-transform: uppercase;
+  padding: 6px 20px;
+  background: linear-gradient(180deg, rgba(0, 212, 255, 0.08), transparent);
+  border: 1px solid $border-cyan;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  display: inline-block;
+}
+
+// ─── Footer ───────────────────────────────────────────────────────────────────
+.app__footer {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 24px;
+  font-family: $font-hud;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: $text-dim;
+  text-transform: uppercase;
+  border-top: 1px solid $border;
+  margin-top: 8px;
+}
+
+.footer__sep {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: $text-dim;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .hud__center { display: none; }
+  .driver-strip__number { font-size: 28px; }
+  .driver-strip__name   { font-size: 16px; }
+  .dashboard { padding: 12px; }
+}
