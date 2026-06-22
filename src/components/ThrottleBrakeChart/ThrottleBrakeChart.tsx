@@ -142,13 +142,13 @@ export function ThrottleBrakeChart({
   );
 
   const yLabels = [
-    { text: "100%", bottom: 100, avg: false },
+    { text: "100", bottom: 100, avg: false },
     { text: "AVG", bottom: avgThrottle, avg: true },
-    { text: "60%", bottom: 60, avg: false },
-    { text: "40%", bottom: 40, avg: false },
+    { text: "60", bottom: 60, avg: false },
+    { text: "40", bottom: 40, avg: false },
     { text: "AVG", bottom: avgBrake, avg: true },
-    { text: "20%", bottom: 20, avg: false },
-    { text: "0%", bottom: 0, avg: false },
+    { text: "20", bottom: 20, avg: false },
+    { text: "0", bottom: 0, avg: false },
   ];
 
   // Where the active lap sits across the chart (0–100%), and how the
@@ -189,7 +189,22 @@ export function ThrottleBrakeChart({
       <div className={styles.divider} />
 
       {view === "spikes" ? (
-        <SpikesChart throttleAvg={4} brakeAvg={5} />
+        // Same lapData drives both views — map {throttle, brake} (0-100%
+        // values) into the {throttleAvg, brakeAvg} shape SpikesChart
+        // expects, and pass throttleMax/brakeMax = 100 since these are
+        // percentages, not raw lap-average units like SpikesChart's own
+        // defaults. This way switching between PERCENT and SPIKES never
+        // changes the underlying dataset, only how it's visualized.
+        <SpikesChart
+          lapData={lapData.map((l) => ({
+            throttleAvg: l.throttle,
+            brakeAvg: l.brake,
+          }))}
+          throttleAvg={avgThrottle}
+          brakeAvg={avgBrake}
+          throttleMax={100}
+          brakeMax={100}
+        />
       ) : (
         <div className={styles.chartWrapper}>
           <div className={styles.chartOuter}>

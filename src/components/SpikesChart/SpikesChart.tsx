@@ -78,15 +78,18 @@ export function SpikesChart({
     setSelectedLap(prev => prev === i ? null : i)
 
   // Numeric gridline labels only — these stay in the evenly-spaced flex
-  // column. The "AVG" labels are rendered separately below, pinned to the
-  // actual pixel height of their avg line (throttleAvgY / brakeAvgY),
-  // since that height is data-driven and won't reliably land on an
-  // evenly-spaced flex slot the way these fixed numeric ticks do.
+  // column. Derived from throttleMax/brakeMax so they actually scale with
+  // whatever data range is passed in (e.g. 0–100 for percentages) instead
+  // of hardcoding values that only matched the default 60/40 scale.
+  // The "AVG" labels are rendered separately below, pinned to the actual
+  // pixel height of their avg line (throttleAvgY / brakeAvgY), since that
+  // height is data-driven and won't reliably land on an evenly-spaced flex
+  // slot the way these fixed numeric ticks do.
   const yLabels = [
     { text: `${throttleMax}` },
-    { text: '40' },
+    { text: `${Math.round(throttleMax / 2)}` },
     { text: '0' },
-    { text: '20' },
+    { text: `${Math.round(brakeMax / 2)}` },
     { text: `${brakeMax}` },
   ]
 
@@ -228,6 +231,7 @@ export function SpikesChart({
             </svg>
           )}
 
+          {/* Vertical guide line under the active lap's dots */}
           {activeLapPct !== null && (
             <div
               className={styles.lapIndicator}
@@ -235,13 +239,6 @@ export function SpikesChart({
             />
           )}
 
-          {activeLapPct !== null && (
-            <div
-              className={styles.lapIndicator}
-              style={{ left: `${activeLapPct}%` }}
-            />
-          )}
-          .
           {/* Tooltip */}
           {activeLap !== null && activeLapPct !== null && (
             <div
