@@ -1,9 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
-import Navbar from '../components/Navbar';
-import CalendarHeader from '../components/Calender';
-import SessionsPanel from '../components/SessionPanel';
-import type { SessionItem, QuinPod } from '../components/SessionPanel/SessionPanel.types';
-import styles from './LandingPage.module.scss';
+import React, { useState, useRef, useCallback } from 'react'
+import Navbar from '../components/Navbar'
+import CalendarHeader from '../components/Calender'
+import SessionsPanel from '../components/SessionPanel'
+import { SessionDetail } from '../components/SessionDetail'
+import type { SessionItem, QuinPod } from '../components/SessionPanel/SessionPanel.types'
+import styles from './LandingPage.module.scss'
 
 const sessions: SessionItem[] = [
   {
@@ -84,33 +85,73 @@ const sessions: SessionItem[] = [
       { lat: 52.0786, lng: -1.0169 },
     ],
   },
-];
+]
 
 const pods: QuinPod[] = [
   { id: 'pod-1', name: 'PRO+ 400X', lastConnected: '3 hours ago', imageUrl: '/assets/pod.png' },
   { id: 'pod-2', name: 'PRO+ 400X', lastConnected: '3 hours ago', imageUrl: '/assets/pod.png' },
-];
+]
 
-const NAVBAR_H       = 94;   // px — matches Navbar height
-const CAL_EXPANDED_H = 292;  // px — full calendar height
-const CAL_COLLAPSED_H = 60;  // px — single-row collapsed height
+const NAVBAR_H        = 94
+const CAL_EXPANDED_H  = 292
+const CAL_COLLAPSED_H = 60
 
 export default function LandingPage() {
-  const [collapsed, setCollapsed] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [collapsed, setCollapsed]           = useState(false)
+  const [selectedSession, setSelectedSession] = useState<SessionItem | null>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const handleScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCollapsed(el.scrollTop > 0);
-  }, []);
+    const el = scrollRef.current
+    if (!el) return
+    setCollapsed(el.scrollTop > 0)
+  }, [])
 
-  const headerHeight = NAVBAR_H + (collapsed ? CAL_COLLAPSED_H : CAL_EXPANDED_H);
+  const headerHeight = NAVBAR_H + (collapsed ? CAL_COLLAPSED_H : CAL_EXPANDED_H)
 
+  // ── Session detail view ───────────────────────────────────────────────────
+  if (selectedSession) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <Navbar userInitials="PG" />
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <SessionDetail
+            session={{
+              id:               selectedSession.id,
+              trackName:        selectedSession.trackName,
+              subtitle:         `Circuit | ${selectedSession.date}`,
+              date:             selectedSession.date,
+              device:           selectedSession.device,
+              totalTime:        selectedSession.duration,
+              totalDistanceKm:  parseFloat(selectedSession.distanceKm ?? '0'),
+              maxSpeedKmh:      120,
+              elevationM:       12.58,
+              laps:             selectedSession.laps ?? 32,
+              polyline:         selectedSession.polyline,
+              minLat:           selectedSession.minLat,
+              maxLat:           selectedSession.maxLat,
+              minLng:           selectedSession.minLng,
+              maxLng:           selectedSession.maxLng,
+              throttlePercent:  60,
+              brakePercent:     60,
+              throttleSpikes:   40,
+              brakeSpikes:      30,
+              lapCount:         3,
+              pitLap:           3,
+              hotLap:           19,
+              avgSpeedKmh:      55,
+              maxSpeedChart:    120,
+            }}
+            onBack={() => setSelectedSession(null)}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  // ── Session list view (default) ───────────────────────────────────────────
   return (
     <div className={styles.page}>
-
-      {/* Fixed top: Navbar + CalendarHeader */}
       <div className={styles.fixedHeader}>
         <Navbar userInitials="PG" />
         <CalendarHeader
@@ -123,18 +164,11 @@ export default function LandingPage() {
         />
       </div>
 
-      {/*
-        Scroll container:
-        - top = headerHeight (pushes content below the fixed header)
-        - height = 100vh - headerHeight (fills EXACTLY the remaining viewport)
-        - overflow-y: auto so it scrolls internally
-        No margin-top — use top + height so it never overflows the viewport.
-      */}
       <div
         ref={scrollRef}
         className={styles.scrollContent}
         style={{
-          top: headerHeight,
+          top:    headerHeight,
           height: `calc(100vh - ${headerHeight}px)`,
         }}
         onScroll={handleScroll}
@@ -142,11 +176,10 @@ export default function LandingPage() {
         <SessionsPanel
           sessions={sessions}
           pods={pods}
-          onSessionClick={(s) => console.log('Session:', s.trackName)}
+          onSessionClick={setSelectedSession}
           onSearch={(q) => console.log('Search:', q)}
         />
       </div>
-
     </div>
-  );
+  )
 }

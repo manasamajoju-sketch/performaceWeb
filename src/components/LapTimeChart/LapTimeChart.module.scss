@@ -1,0 +1,119 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.wrapper {
+  width: 100%;
+  @include flex-column($spacing-4);
+}
+
+// ─── Header — title + COUNT / PIT LAP / HOT LAP stats ────────────────────────
+// Moved in from SessionDetail's old `lapAnalysisHeader` block so the title
+// and stats live alongside the timeline they describe.
+.header {
+  @include flex-row(flex-end, $spacing-24);
+  padding-bottom: $spacing-8;
+  margin-bottom: $spacing-8;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+  margin-right: auto;
+}
+
+.stat {
+  @include flex-column($spacing-2);
+}
+
+.statValue {
+  font-size: 22px;
+  font-weight: $font-weight-semi;
+  color: $color-text;
+  line-height: 1;
+}
+
+.statSub {
+  font-size: 9px;
+  font-weight: $font-weight-semi;
+  letter-spacing: 0.1em;
+  color: $color-text-muted;
+  text-transform: uppercase;
+}
+
+// ─── Pit lap markers ──────────────────────────────────────────────────────────
+.markers {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 28px;
+}
+
+.markerSlot {
+  flex: 0 0 auto;
+  width: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.pitLabel {
+  font-size: 7px;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+// Dashed line connecting the "PIT LAP" label down to its dot
+.pitConnector {
+  width: 0;
+  flex: 1;
+  border-left: 1px dashed $color-divider;
+  margin-top: 2px;
+}
+
+.dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Fixed equal width/height (not flex: 1 + a separate height) so
+// border-radius: 50% always rounds a true circle instead of an oval
+// that stretches with however much horizontal space each dot's flex
+// slot happens to get.
+.dot {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.1s;
+
+  &:hover {
+    transform: scale(1.15);
+  }
+}
+
+.labels {
+  display: flex;
+  gap: 4px;
+}
+
+.labelSlot {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.lapLabel {
+  font-size: 8px;
+  color: $color-text-muted;
+  white-space: nowrap;
+}

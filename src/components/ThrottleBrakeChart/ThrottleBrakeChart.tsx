@@ -151,9 +151,6 @@ export function ThrottleBrakeChart({
     { text: "0", bottom: 0, avg: false },
   ];
 
-  // Where the active lap sits across the chart (0–100%), and how the
-  // tooltip should align itself relative to that position so it never
-  // overflows the left or right edge of the chart area.
   const activeLapPct =
     activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null;
 
@@ -189,12 +186,6 @@ export function ThrottleBrakeChart({
       <div className={styles.divider} />
 
       {view === "spikes" ? (
-        // Same lapData drives both views — map {throttle, brake} (0-100%
-        // values) into the {throttleAvg, brakeAvg} shape SpikesChart
-        // expects, and pass throttleMax/brakeMax = 100 since these are
-        // percentages, not raw lap-average units like SpikesChart's own
-        // defaults. This way switching between PERCENT and SPIKES never
-        // changes the underlying dataset, only how it's visualized.
         <SpikesChart
           lapData={lapData.map((l) => ({
             throttleAvg: l.throttle,

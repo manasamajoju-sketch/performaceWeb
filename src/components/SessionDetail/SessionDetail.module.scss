@@ -1,0 +1,281 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Page layout ──────────────────────────────────────────────────────────────
+.page {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  font-family: $font-base;
+  overflow: hidden;
+      padding: 14px 54px;
+}
+
+// ─── Left panel ───────────────────────────────────────────────────────────────
+.left {
+  flex: 0 0 40%;
+  max-width: 440px;
+  @include flex-column;
+  border-right: 1px solid $color-divider;
+  overflow-y: auto;
+  padding: $spacing-20;
+  gap: $spacing-16;
+}
+
+// Session header
+.sessionHeader {
+  @include flex-row(flex-start);
+  justify-content: space-between;
+}
+
+.sessionTitleGroup {
+  @include flex-column($spacing-2);
+}
+
+.sessionTitle {
+  font-size: 20px;
+  font-weight: $font-weight-semi;
+  color: $color-text;
+  letter-spacing: -0.2px;
+cursor: pointer;
+  &:hover { opacity: 0.75; }
+}
+
+.sessionSubtitle {
+  font-size: 11px;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+}
+
+.menuBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-muted;
+  font-size: 20px;
+  padding: $spacing-4;
+  line-height: 1;
+  &:hover { color: $color-text; }
+}
+
+// Track map
+.mapWrap {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+//   background: #1a1d2a;
+  aspect-ratio: 4 / 3;
+}
+
+// Playback controls
+.playback {
+  @include flex-row(center);
+  justify-content: space-between;
+  padding: $spacing-8 0;
+  border-top: 1px solid $color-divider;
+  border-bottom: 1px solid $color-divider;
+}
+
+.playbackControls {
+  @include flex-row(center, $spacing-12);
+}
+
+.playBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  transition: background 0.15s;
+  &:hover { background: rgba(255,255,255,0.08); }
+}
+
+.speedBtn {
+  background: none;
+  border: 1px solid $color-divider;
+  color: $color-text-muted;
+  font-family: $font-base;
+  font-size: 11px;
+  font-weight: $font-weight-semi;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  &:hover { border-color: $color-teal; color: $color-teal; }
+}
+
+.playbackTime {
+  font-size: 11px;
+  color: $color-text-muted;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.04em;
+}
+
+// Stats list
+.statsList {
+  @include flex-column;
+  gap: 0;
+}
+
+.statRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-12 0;
+  border-bottom: 1px solid $color-divider;
+
+  &:last-child { border-bottom: none; }
+}
+
+.statLabelGroup {
+  @include flex-column($spacing-2);
+}
+
+.statLabel {
+  font-size: 13px;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+}
+
+.statUnit {
+  font-size: 9px;
+  font-weight: $font-weight-semi;
+  letter-spacing: 0.1em;
+  color: $color-text-muted;
+  text-transform: uppercase;
+}
+
+.statValue {
+  font-size: 26px;
+  font-weight: $font-weight-semi;
+  color: $color-text;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+// ─── Right panel ──────────────────────────────────────────────────────────────
+.right {
+  flex: 1;
+  @include flex-column;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+// Tabs bar
+.tabBar {
+  @include flex-row(center);
+  justify-content: space-between;
+  padding: $spacing-16 $spacing-20;
+  border-bottom: 1px solid $color-divider;
+  flex-shrink: 0;
+}
+
+.tabs {
+  @include flex-row(center, $spacing-4);
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: $spacing-6 $spacing-12;
+  font-family: $font-base;
+  font-size: 15px;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover { color: $color-text; }
+}
+
+.tabActive {
+  color: $color-text;
+  border-bottom-color: $color-teal;
+}
+
+.sensorBtn {
+  background: none;
+  border: 1px solid $color-divider;
+  color: $color-text-muted;
+  font-family: $font-base;
+  font-size: 11px;
+  font-weight: $font-weight-medium;
+  padding: $spacing-4 $spacing-12;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  &:hover { border-color: $color-teal; color: $color-teal; }
+}
+
+// Chart sections
+.sections {
+  @include flex-column;
+  padding: $spacing-16 $spacing-20;
+  gap: $spacing-16;
+  overflow-y: auto;
+}
+
+// Each section block
+.section {
+  @include flex-column($spacing-12);
+}
+
+.sectionHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-16;
+  padding-bottom: $spacing-8;
+  border-bottom: 1px solid $color-divider;
+}
+
+.sectionStat {
+  @include flex-row(flex-start, $spacing-16);
+}
+
+.sectionStatGroup {
+  @include flex-column($spacing-2);
+}
+
+.sectionStatLabel {
+  font-size: 13px;
+  font-weight: $font-weight-medium;
+  color: $color-text;
+}
+
+.sectionStatSub {
+  font-size: 9px;
+  font-weight: $font-weight-semi;
+  letter-spacing: 0.1em;
+  color: $color-text-muted;
+  text-transform: uppercase;
+}
+
+.sectionStatValue {
+  font-size: 22px;
+  font-weight: $font-weight-semi;
+  color: $color-text;
+  line-height: 1;
+}
+
+.sectionStatValueTeal {
+  color: $color-teal;
+}
+
+.sectionDivider {
+  width: 1px;
+  align-self: stretch;
+  background: $color-divider;
+}
+.sectionDividerHorizontal {
+  height: 1px;
+  width: 100%;
+  flex-shrink: 0;
+  background: $color-divider;
+}
+
