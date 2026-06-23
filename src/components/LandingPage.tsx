@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react'
+import  { useState, useRef, useCallback } from 'react'
 import Navbar from '../components/Navbar'
 import CalendarHeader from '../components/Calender'
 import SessionsPanel from '../components/SessionPanel'

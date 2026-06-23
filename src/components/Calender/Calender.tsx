@@ -57,7 +57,7 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({
 }) => {
   const now = new Date();
 
-  const [localYear,  setLocalYear]  = useState(yearProp  ?? now.getFullYear());
+  const [localYear, ]  = useState(yearProp  ?? now.getFullYear());
   const [localMonth, setLocalMonth] = useState(monthProp ?? now.getMonth());
   const [dropOpen,   setDropOpen]   = useState(false);
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
