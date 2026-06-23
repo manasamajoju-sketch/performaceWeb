@@ -18,16 +18,13 @@
 }
 
 // Scroll area sits below the fixed header.
-// `top` and `height` are set inline so it perfectly fills
-// the remaining viewport with no overflow and no clipping.
 .scrollContent {
-  position: fixed;   // fixed so top+height are relative to viewport
+  position: fixed;
   left: 0;
   right: 0;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  // top and height set inline in component
   transition: top 0.3s ease, height 0.3s ease;
 }
