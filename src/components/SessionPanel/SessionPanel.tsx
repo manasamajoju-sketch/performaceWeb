@@ -9,7 +9,7 @@ import type {
 import defaultPodIcon from '../../assets/pod.svg';
 import blackPodIcon from '../../assets/blackPod.svg';
 import rightArrowIcon from '../../assets/rightArrow.svg';
-import searchIcon from '../../assets/search.svg';
+import searchIcon from '../../assets/Search.svg';
 import RouteMap from '../RouteMap';
 
 const DEFAULT_CATEGORIES: Category[] = ['All', 'Motorcycling', 'Cycling', 'Equestrian'];
