@@ -1,0 +1,214 @@
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+$white:      #ffffff;
+$teal-mid:   #3dd6e8;
+$teal-dark:  #00b8d4;
+$text-dark:  #1a1a1a;
+$text-mid:   #555555;
+$text-muted: #999999;
+$border:     #d8d8d8;
+$input-bg:   #f9f9f9;
+$btn-teal:   #2dccd8;
+$btn-hover:  #1db8c4;
+$font:       'SuisseIntl', -apple-system, BlinkMacSystemFont, sans-serif;
+
+// ─── Page split ───────────────────────────────────────────────────────────────
+.page {
+  display: flex;
+  min-height: 100vh;
+  font-family: $font;
+}
+
+// ─── Left panel ───────────────────────────────────────────────────────────────
+.left {
+  flex: 0 0 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $white;
+  padding: 48px 40px;
+}
+
+// ─── Right brand panel ────────────────────────────────────────────────────────
+.brand {
+  flex: 1;
+  position: relative;
+  background: linear-gradient(0deg, #00C8DC 0%, #ffffff 120%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+// ─── Logo container ───────────────────────────────────────────────────────────
+.logoWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 40px;
+}
+
+// The actual quin SVG wordmark — scales with the panel
+.quinSvg {
+ width:19vw;
+  height: auto;
+}
+
+.performance {
+  font-family: $font;
+font-weight: 300;
+    font-size: 18px;
+    letter-spacing: 0.35em;
+    color: rgba(255, 255, 255, 0.89);
+    margin: -18px;
+    margin-left: 33%;
+}
+
+.tagLeft {
+  position: absolute;
+  left: 3.1%;
+  top: 16.3%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  font-family: $font;
+  font-size: 6px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.tagRight {
+  position: absolute;
+  left: 96.9%;
+  top: 87.7%;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  font-family: $font;
+  font-size: 6px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+// ─── Form ─────────────────────────────────────────────────────────────────────
+.formWrap {
+  width: 100%;
+  max-width: 280px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: $text-dark;
+  margin-bottom: 4px;
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  font-size: 11px;
+  color: $text-muted;
+  margin-bottom: 28px;
+  line-height: 1.4;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: $text-mid;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: $input-bg;
+  font-family: $font;
+  font-size: 12px;
+  color: $text-dark;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+
+  &::placeholder { color: $text-muted; }
+  &:focus { border-color: $teal-mid; }
+}
+
+.passcodeSection { margin-top: 20px; }
+
+.passcodeBoxes {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.passcodeBox {
+  width: 36px;
+  height: 36px;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: $input-bg;
+  font-family: $font;
+  font-size: 16px;
+  font-weight: 600;
+  color: $text-dark;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.15s;
+
+  &:focus { border-color: $teal-mid; }
+}
+
+.forgotCode {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: $text-muted;
+  cursor: pointer;
+  transition: color 0.15s;
+  &:hover { color: $teal-dark; }
+}
+
+.loginBtn {
+  width: 100%;
+  height: 40px;
+  margin-top: 24px;
+  background: $btn-teal;
+  color: $white;
+  border: none;
+  border-radius: 6px;
+  font-family: $font;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background 0.15s;
+  &:hover { background: $btn-hover; }
+}
+
+.terms {
+  margin-top: 16px;
+  font-size: 10px;
+  color: $text-muted;
+  text-align: center;
+  line-height: 1.5;
+
+  a {
+    color: $text-muted;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 680px) {
+  .page  { flex-direction: column; }
+  .left  { flex: none; padding: 48px 24px 32px; }
+  .brand { flex: none; min-height: 320px; }
+  .tagLeft, .tagRight { display: none; }
+}

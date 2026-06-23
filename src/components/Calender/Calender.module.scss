@@ -1,0 +1,339 @@
+// ── Root ─────────────────────────────────────────────────────────────
+.wrapper {
+  width: 100%;
+  background: #00C8DC;
+  display: flex;
+  align-items: flex-start;
+  padding: 9px 32px;
+  box-sizing: border-box;
+  gap: 40px;
+  min-height: 280px;
+  position: relative;
+    transition: min-height 0.3s ease, padding 0.3s ease, height 0.3s ease;
+  overflow: hidden;
+}
+
+// ── Left: month nav + grid ────────────────────────────────────────────
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+}
+
+// ── Month row ─────────────────────────────────────────────────────────
+.monthRow {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.monthBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 10px 0;
+}
+
+.monthLabel {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 41.63px;
+  white-space: nowrap;
+}
+
+// Chevron — down arrow made with borders
+.chevron {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-right: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(45deg);
+  margin-top: -6px;
+  transition: transform 0.2s ease;
+}
+
+.chevronUp {
+  transform: rotate(-135deg);
+  margin-top: 4px;
+}
+
+// ── Month dropdown ────────────────────────────────────────────────────
+.dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 100;
+  background: #00B8CA;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  min-width: 280px;
+  overflow: hidden;
+}
+
+.dropItem {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 24px;
+  padding: 12px 16px;
+  text-align: left;
+  opacity: 0.7;
+  transition: background 0.15s, opacity 0.15s;
+
+  &:hover {
+    background: rgba(255,255,255,0.15);
+    opacity: 1;
+  }
+}
+
+.dropItemActive {
+  opacity: 1;
+  font-weight: 450;
+  background: rgba(255,255,255,0.20);
+}
+
+// ── Calendar grid — 7 columns (Mon–Sun), standard horizontal ──────────
+.calendarGrid {
+  display: grid;
+    grid-template-columns: repeat(7, 7rem);
+    grid-auto-rows: 41px;
+    gap: 0;
+    padding-left: 10rem;
+}
+
+// Shared cell base
+%cellBase {
+  width: 52.59px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 20px;
+  font-weight: 450;
+  line-height: 25px;
+  color: white;
+  box-sizing: border-box;
+}
+
+.cellEmpty {
+  @extend %cellBase;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cell {
+  @extend %cellBase;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+
+.cell:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cellSelected {
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+
+// Day with a session — cyan highlight
+.cell_session {
+  background: rgba(127, 237, 255, 0.40);
+}
+
+// Today — white outline
+.cell_today {
+  outline: 1px solid white;
+  outline-offset: -0.5px;
+  font-weight: 500;
+}
+
+// Past day without session — faded
+.cell_past {
+  opacity: 0.5;
+}
+
+// Future day — very faded
+.cell_future {
+  opacity: 0.2;
+}
+.divider {
+  width: 1px;
+  background: rgba(0,0,0,0.10);
+  align-self: stretch;
+  flex-shrink: 0;
+  margin-top: 24px;
+}
+// ── Summary ───────────────────────────────────────────────────────────
+.summary {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 18rem;
+  // padding-left: 32px;
+  // margin-left: 32px;
+}
+
+.summaryTitle {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 32px;
+  font-weight: 300;
+  line-height: 41.63px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  width: 100%;
+}
+
+.summaryMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summaryLabel {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 28px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.summaryUnit {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 16px;
+  font-weight: 250;
+  line-height: 20px;
+  opacity: 0.8;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.summaryValue {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 24.43px;
+  text-align: right;
+}
+// ── Collapsed state (sticky, single week row) ─────────────────────────
+.wrapperCollapsed {
+  min-height: unset;
+  height: 60px;
+  padding-top: 0;
+  padding-bottom: 0;
+  align-items: center;
+  gap: 16px;
+ 
+  .left {
+    flex-direction: row;
+    align-items: center;
+    gap: 24px;
+     flex: 1;
+  }
+ 
+  .monthRow {
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+ 
+  .monthLabel {
+    font-size: 24px;
+    line-height: 32px;
+  }
+ 
+  .calendarGrid {
+    // single row of 7 cells
+    grid-template-columns: repeat(7, 4rem);
+    grid-auto-rows: 44px;
+     flex: 1;
+  }
+ 
+  .cell,
+  .cellEmpty {
+    width: 44px;
+     height: 44px;
+    font-size: 16px;
+  }
+  // Summary: just the number, no title/rows
+  .summary {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+}
+ 
+// Selected date — white fill
+.cell_selected {
+  background: white !important;
+  color: #00C8DC !important;
+  font-weight: 600;
+  outline: none !important;
+}
+ 
+// Collapsed summary — just the session count
+.summaryCollapsed {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+ .summaryLabel {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 20px;
+  font-weight: 300;
+  line-height: 28px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.summaryUnit {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 16px;
+  font-weight: 250;
+  line-height: 20px;
+  opacity: 0.8;
+  display: flex;
+  justify-content: flex-start;
+}
+.summaryCollapsedValue {
+  color: white;
+  font-family: 'Suisse Intl', sans-serif;
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 1;
+}
