@@ -506,6 +506,8 @@
   font-weight: 300;
   line-height: 38px;
   margin-bottom: 0;
+      justify-content: flex-start;
+    display: flex;
 
   @media (max-width: 1280px) {
     font-size: 28px;
@@ -549,6 +551,8 @@
   font-size: 22px;
   font-weight: 300;
   line-height: 26px;
+      justify-content: flex-start;
+    display: flex;
 
   @media (max-width: 1024px) {
     font-size: 17px;
@@ -560,14 +564,18 @@
   font-family: "Suisse Intl", sans-serif;
   font-size: 14px;
   font-weight: 300;
-  line-height: 18px;
+  line-height: 10px;
 }
 
 .podMetaLabel {
   color: #47494a;
+      justify-content: flex-start;
+    display: flex;
 }
 .podMetaTime {
   color: #00c8dc;
+      justify-content: flex-start;
+    display: flex;
 }
 
 .podImageWrap {

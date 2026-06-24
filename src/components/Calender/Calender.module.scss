@@ -287,6 +287,8 @@
   font-weight: 300;
   line-height: 41.63px;
   margin-bottom: 10px;
+      justify-content: flex-start;
+    display: flex;
 
   @media (max-width: 1024px) {
     font-size: 26px;
@@ -325,6 +327,8 @@
   font-size: 20px;
   font-weight: 300;
   line-height: 28px;
+      justify-content: flex-start;
+    display: flex;
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -343,6 +347,8 @@
   font-weight: 250;
   line-height: 20px;
   opacity: 0.8;
+      justify-content: flex-start;
+    display: flex;
 
   @media (max-width: 768px) {
     font-size: 12px;
