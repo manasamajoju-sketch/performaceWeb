@@ -28,3 +28,27 @@
   -webkit-overflow-scrolling: touch;
   transition: top 0.3s ease, height 0.3s ease;
 }
+
+// ── Small screens: let the calendar scroll with content ───────────────
+@media (max-width: 768px) {
+  .page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .fixedHeader {
+    position: sticky;
+    top: 0;
+    // keep it above content while scrolling
+    z-index: 100;
+  }
+
+  .scrollContent {
+    position: static;
+    height: auto !important;
+    top: auto !important;
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
+}

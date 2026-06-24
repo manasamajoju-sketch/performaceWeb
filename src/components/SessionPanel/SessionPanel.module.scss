@@ -14,10 +14,16 @@
   min-width: 0;
   padding-top: 24px;
   padding-right: 2rem;
-  padding-left: 1rem;
+  padding-left: 48px;    // ← was 1rem; now matches calendar's left padding
   padding-bottom: 40px;
 
+  @media (max-width: 1024px) {
+    padding-left: 32px;
+    padding-right: 1.5rem;
+  }
+
   @media (max-width: 768px) {
+    padding-left: 20px;
     padding-right: 1rem;
     padding-top: 16px;
   }
@@ -125,7 +131,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 5px;
+  padding: 10px 14px;    // ← was 10px 5px; horizontal padding for better pill shape
   border-radius: 8px;
   outline: 1px solid rgba(71, 73, 74, 0.32);
   outline-offset: -1px;
@@ -385,9 +391,8 @@
     padding: 0;
     justify-content: flex-start;
     gap: 16px;
-    // push onto second line under map+info
     flex-basis: 100%;
-    padding-left: calc(100px + 12px); // align with sessionInfo
+    padding-left: calc(100px + 12px);
   }
 
   @media (max-width: 480px) {
@@ -516,7 +521,6 @@
   }
 
   @media (max-width: 900px) {
-    // Move pods below sessions on narrow screens
     display: none;
   }
 }
@@ -635,8 +639,6 @@
     height: 90px;
   }
 }
-
-
 
 .podImagePlaceholder {
   width: 100%;

@@ -152,10 +152,10 @@
 // ── Calendar grid ──────────────────────────────────────────────────────
 .calendarGrid {
   display: grid;
-  grid-template-columns: repeat(7, 5rem);
+  grid-template-columns: repeat(7, 7rem);
   grid-auto-rows: 41px;
   gap: 0;
-  padding-left: 10rem;
+  padding-left: 14rem;
 
   @media (max-width: 1280px) {
     grid-template-columns: repeat(7, 4rem);
