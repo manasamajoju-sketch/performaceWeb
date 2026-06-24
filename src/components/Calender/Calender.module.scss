@@ -1,36 +1,44 @@
+// Padding system: left = 80px (2×40), right = 40px (1×40)
+// Summary column width = 320px matching podsCol in SessionPanel
+
 // ── Root ─────────────────────────────────────────────────────────────
 .wrapper {
   width: 100%;
-  background: #00C8DC;
+  background: #00c8dc;
   display: flex;
   align-items: flex-start;
+  padding: 14px 40px 14px 80px; // top 14 | right 40 | bottom 14 | left 80
   box-sizing: border-box;
-  gap: 40px;
+  gap: 0;
   min-height: 280px;
   position: relative;
-  transition: min-height 0.3s ease, padding 0.3s ease, height 0.3s ease;
+  transition:
+    min-height 0.3s ease,
+    padding 0.3s ease,
+    height 0.3s ease;
   overflow: hidden;
 
   @media (max-width: 1024px) {
+    padding: 12px 24px 12px 40px;
     gap: 24px;
     min-height: 240px;
   }
 
   @media (max-width: 768px) {
     flex-direction: column;
+    padding: 12px 16px;
     gap: 16px;
     min-height: unset;
-    padding-bottom: 16px;
   }
 }
 
 // ── Left: month nav + grid ────────────────────────────────────────────
 .left {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0;
-  flex: 1;
-  min-width: 0;
 }
 
 // ── Month row ─────────────────────────────────────────────────────────
@@ -38,7 +46,6 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  margin-left: 2rem;
   margin-bottom: 4px;
 
   @media (max-width: 768px) {
@@ -52,7 +59,7 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 12px;
   padding: 10px 0;
 
   @media (max-width: 768px) {
@@ -62,7 +69,7 @@
 
 .monthLabel {
   color: white;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 32px;
   font-weight: 300;
   line-height: 41.63px;
@@ -72,14 +79,12 @@
     font-size: 26px;
     line-height: 34px;
   }
-
   @media (max-width: 768px) {
     font-size: 22px;
     line-height: 28px;
   }
 }
 
-// Chevron
 .chevron {
   display: inline-block;
   width: 14px;
@@ -103,9 +108,9 @@
   top: calc(100% + 4px);
   left: 0;
   z-index: 100;
-  background: #00B8CA;
+  background: #00b8ca;
   border-radius: 4px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
@@ -123,17 +128,19 @@
   border: none;
   cursor: pointer;
   color: white;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 18px;
   font-weight: 300;
   line-height: 24px;
   padding: 12px 16px;
   text-align: left;
   opacity: 0.7;
-  transition: background 0.15s, opacity 0.15s;
+  transition:
+    background 0.15s,
+    opacity 0.15s;
 
   &:hover {
-    background: rgba(255,255,255,0.15);
+    background: rgba(255, 255, 255, 0.15);
     opacity: 1;
   }
 
@@ -146,13 +153,13 @@
 .dropItemActive {
   opacity: 1;
   font-weight: 450;
-  background: rgba(255,255,255,0.20);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-// ── Calendar grid ──────────────────────────────────────────────────────
+// ── Calendar grid ─────────────────────────────────────────────────────
 .calendarGrid {
   display: grid;
-  grid-template-columns: repeat(7, 7rem);
+  grid-template-columns: repeat(7, 6rem);
   grid-auto-rows: 41px;
   gap: 0;
   padding-left: 14rem;
@@ -163,18 +170,13 @@
   }
 
   @media (max-width: 1024px) {
-    grid-template-columns: repeat(7, 3.2rem);
-    padding-left: 3rem;
+    grid-template-columns: repeat(7, 44px);
   }
-
   @media (max-width: 768px) {
     grid-template-columns: repeat(7, 1fr);
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
 }
 
-// Shared cell base
 %cellBase {
   width: 52.59px;
   height: 44px;
@@ -182,7 +184,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 2px;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 20px;
   font-weight: 450;
   line-height: 25px;
@@ -193,7 +195,6 @@
     width: 44px;
     font-size: 16px;
   }
-
   @media (max-width: 768px) {
     width: 100%;
     font-size: 14px;
@@ -213,68 +214,66 @@
   background: none;
   padding: 0;
   cursor: pointer;
-  transition: transform 0.12s ease, background-color 0.12s ease;
-}
+  transition: background-color 0.12s ease;
 
-.cell:hover {
-  transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.cellSelected {
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
 }
 
 .cell_session {
-  background: rgba(127, 237, 255, 0.40);
+  background: rgba(127, 237, 255, 0.4);
 }
-
 .cell_today {
   outline: 1px solid white;
   outline-offset: -0.5px;
   font-weight: 500;
 }
-
 .cell_past {
   opacity: 0.5;
 }
-
 .cell_future {
   opacity: 0.2;
 }
+.cell_selected {
+  background: white !important;
+  color: #00c8dc !important;
+  font-weight: 600;
+  outline: none !important;
+}
 
+// ── Divider between grid and summary ─────────────────────────────────
 .divider {
   width: 1px;
-  background: rgba(0,0,0,0.10);
+  background: rgba(255, 255, 255, 0.24);
   align-self: stretch;
   flex-shrink: 0;
-  margin-top: 24px;
+  margin: 0 0 0 40px; // 40px gap on left before divider
 
   @media (max-width: 768px) {
     width: 100%;
     height: 1px;
-    margin-top: 0;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin: 0;
     align-self: auto;
   }
 }
 
-// ── Summary ───────────────────────────────────────────────────────────
+// ── Summary — fixed 320px matching podsCol ────────────────────────────
 .summary {
   flex-shrink: 0;
+  width: 320px; // matches podsCol width in SessionPanel
   display: flex;
   flex-direction: column;
-  min-width: 18rem;
+  padding-left: 40px; // 1×40 from divider
+  padding-right: 0; // right edge of wrapper already has 40px
 
   @media (max-width: 1024px) {
-    min-width: 14rem;
+    width: 240px;
+    padding-left: 24px;
   }
-
   @media (max-width: 768px) {
-    min-width: unset;
     width: 100%;
-    padding: 0 1rem;
+    padding-left: 0;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 8px;
@@ -283,19 +282,16 @@
 
 .summaryTitle {
   color: white;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 32px;
   font-weight: 300;
   line-height: 41.63px;
   margin-bottom: 10px;
-  display: flex;
-  justify-content: flex-start;
 
   @media (max-width: 1024px) {
     font-size: 26px;
     line-height: 34px;
   }
-
   @media (max-width: 768px) {
     font-size: 22px;
     width: 100%;
@@ -325,18 +321,15 @@
 
 .summaryLabel {
   color: white;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 20px;
   font-weight: 300;
   line-height: 28px;
-  display: flex;
-  justify-content: flex-start;
 
   @media (max-width: 1024px) {
     font-size: 16px;
     line-height: 22px;
   }
-
   @media (max-width: 768px) {
     font-size: 14px;
     line-height: 18px;
@@ -345,13 +338,11 @@
 
 .summaryUnit {
   color: white;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 16px;
   font-weight: 250;
   line-height: 20px;
   opacity: 0.8;
-  display: flex;
-  justify-content: flex-start;
 
   @media (max-width: 768px) {
     font-size: 12px;
@@ -361,36 +352,31 @@
 
 .summaryValue {
   color: white;
-  font-family: 'Suisse Intl', sans-serif;
+  font-family: "Suisse Intl", sans-serif;
   font-size: 36px;
   font-weight: 300;
   line-height: 24.43px;
   text-align: right;
-  margin-right: 1rem;
 
   @media (max-width: 1024px) {
     font-size: 28px;
   }
-
   @media (max-width: 768px) {
     font-size: 24px;
-    margin-right: 0;
   }
 }
 
 // ── Collapsed state ────────────────────────────────────────────────────
 .wrapperCollapsed {
-  min-height: unset;
+  min-height: unset !important;
   height: 60px;
   padding-top: 0;
   padding-bottom: 0;
   align-items: center;
-  gap: 16px;
 
   @media (max-width: 768px) {
     height: 52px;
-    gap: 8px;
-    flex-direction: row; // override mobile column direction in collapsed
+    flex-direction: row;
   }
 
   .left {
@@ -410,8 +396,8 @@
   }
 
   .monthLabel {
-    font-size: 24px;
-    line-height: 32px;
+    font-size: 20px;
+    line-height: 28px;
 
     @media (max-width: 768px) {
       font-size: 16px;
@@ -420,22 +406,16 @@
   }
 
   .calendarGrid {
-    grid-template-columns: repeat(7, 7rem);
+    grid-template-columns: repeat(7, 44px);
     grid-auto-rows: 44px;
     flex: 1;
-    padding-left: 0;
-
-    @media (max-width: 1024px) {
-      grid-template-columns: repeat(7, 3rem);
-    }
 
     @media (max-width: 768px) {
       grid-template-columns: repeat(7, 1fr);
       grid-auto-rows: 36px;
     }
-
     @media (max-width: 480px) {
-      display: none; // hide mini calendar on very small screens when collapsed
+      display: none;
     }
   }
 
@@ -452,50 +432,23 @@
     }
   }
 
-  .summary {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    min-width: 19.3rem;
-    padding: 0;
-
-    @media (max-width: 768px) {
-      flex-direction: column;
-      gap: 2px;
-    }
-  }
-
   .divider {
+    margin: 0 0 0 40px;
+  }
+
+  .summary {
+    width: 320px;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 40px;
+
     @media (max-width: 768px) {
-      display: none;
+      width: auto;
+      padding-left: 0;
     }
   }
-}
 
-// Selected date
-.cell_selected {
-  background: white !important;
-  color: #00C8DC !important;
-  font-weight: 600;
-  outline: none !important;
-}
-
-// Collapsed summary
-.summaryCollapsed {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
-}
-
-.summaryCollapsedValue {
-  color: white;
-  font-family: 'Suisse Intl', sans-serif;
-  font-size: 48px;
-  font-weight: 300;
-  line-height: 1;
-
-  @media (max-width: 768px) {
-    font-size: 32px;
+  .summaryTitle {
+    display: none;
   }
 }
