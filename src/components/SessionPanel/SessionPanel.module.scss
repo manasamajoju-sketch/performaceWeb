@@ -14,8 +14,19 @@
   min-width: 0;
   padding-top: 24px;
   padding-right: 2rem;
-  padding-left: 1rem;
+  padding-left: 48px;    // ← was 1rem; now matches calendar's left padding
   padding-bottom: 40px;
+
+  @media (max-width: 1024px) {
+    padding-left: 32px;
+    padding-right: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding-left: 20px;
+    padding-right: 1rem;
+    padding-top: 16px;
+  }
 }
 
 // ── Category tabs ─────────────────────────────────────────────────────
@@ -24,6 +35,11 @@
   align-items: center;
   gap: 21px;
   margin-bottom: 0;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 12px;
+  }
 }
 
 .catTab {
@@ -38,8 +54,29 @@
   line-height: 38px;
   opacity: 0.22;
   transition: opacity 0.15s;
+  white-space: nowrap;
 
   &:hover { opacity: 0.5; }
+
+  @media (max-width: 1280px) {
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 22px;
+    line-height: 28px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+    line-height: 20px;
+  }
 }
 
 .catTabActive {
@@ -54,6 +91,12 @@
   gap: 21px;
   margin-top: 12px;
   margin-bottom: 0;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 12px;
+    margin-top: 8px;
+  }
 }
 
 .subTab {
@@ -68,8 +111,13 @@
   color: #47494A;
   opacity: 0.3;
   transition: opacity 0.15s, color 0.15s;
+  white-space: nowrap;
 
   &:hover { opacity: 0.6; }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 }
 
 .subTabActive {
@@ -83,11 +131,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 5px;
+  padding: 10px 14px;    // ← was 10px 5px; horizontal padding for better pill shape
   border-radius: 8px;
   outline: 1px solid rgba(71, 73, 74, 0.32);
   outline-offset: -1px;
+  flex-shrink: 0;
 
+  @media (max-width: 768px) {
+    width: 100%;
+    flex-shrink: unset;
+  }
 }
 
 .searchIcon {
@@ -132,8 +185,17 @@
   font-weight: 250;
   line-height: 28px;
   opacity: 0.6;
+  min-width: 0;
 
   &::placeholder { color: #757677; opacity: 0.6; }
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 }
 
 // ── Top bar (categories left, search right) ───────────────────────────
@@ -143,12 +205,19 @@
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 4px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
 }
 
 .filtersGroup {
   display: flex;
   flex-direction: column;
   gap: 0;
+  min-width: 0;
 }
 
 // ── Session list ───────────────────────────────────────────────────────
@@ -172,9 +241,20 @@
   &:hover {
     background: rgba(0,200,220,0.04);
   }
+
+  @media (max-width: 1024px) {
+    min-height: 100px;
+  }
+
+  @media (max-width: 768px) {
+    min-height: unset;
+    padding: 12px 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 
-// Track map thumbnail placeholder
+// Track map thumbnail
 .trackMap {
   width: 237px;
   height: 102px;
@@ -191,6 +271,26 @@
     height: 100%;
     object-fit: contain;
   }
+
+  @media (max-width: 1280px) {
+    width: 180px;
+    height: 80px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 140px;
+    height: 64px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100px;
+    height: 56px;
+  }
+
+  @media (max-width: 480px) {
+    width: 80px;
+    height: 48px;
+  }
 }
 
 .trackMapPlaceholder {
@@ -206,6 +306,22 @@
   gap: 5px;
   margin-left: 50px;
   min-width: 174px;
+
+  @media (max-width: 1280px) {
+    margin-left: 28px;
+    min-width: 140px;
+  }
+
+  @media (max-width: 1024px) {
+    margin-left: 16px;
+    min-width: 120px;
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 12px;
+    min-width: 0;
+    flex: 1;
+  }
 }
 
 .sessionName {
@@ -214,6 +330,16 @@
   font-size: 20px;
   font-weight: 300;
   line-height: 28px;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+    line-height: 20px;
+  }
 }
 
 .sessionDate {
@@ -223,6 +349,11 @@
   font-weight: 300;
   line-height: 19.97px;
   opacity: 0.5;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    line-height: 16px;
+  }
 }
 
 .sessionDevice {
@@ -243,6 +374,31 @@
   padding: 0 20px;
   width: 402px;
   flex-shrink: 0;
+
+  @media (max-width: 1280px) {
+    width: 320px;
+    padding: 0 12px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 260px;
+    padding: 0 8px;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+    padding: 0;
+    justify-content: flex-start;
+    gap: 16px;
+    flex-basis: 100%;
+    padding-left: calc(100px + 12px);
+  }
+
+  @media (max-width: 480px) {
+    padding-left: calc(80px + 12px);
+    gap: 12px;
+  }
 }
 
 .statItem {
@@ -251,6 +407,17 @@
   align-items: center;
   gap: 8px;
   width: 100px;
+
+  @media (max-width: 1024px) {
+    width: 80px;
+    gap: 4px;
+  }
+
+  @media (max-width: 768px) {
+    width: auto;
+    min-width: 60px;
+    align-items: flex-start;
+  }
 }
 
 .statValue {
@@ -261,6 +428,15 @@
   line-height: 24.43px;
   text-align: center;
   width: 100%;
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    text-align: left;
+  }
 }
 
 .statUnit {
@@ -272,6 +448,16 @@
   opacity: 0.4;
   text-align: center;
   width: 100%;
+
+  @media (max-width: 1024px) {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 10px;
+    text-align: left;
+  }
 }
 
 // Chevron arrow
@@ -293,6 +479,14 @@
     border-top: 2px solid #00C8DC;
     transform: rotate(45deg);
   }
+
+  @media (max-width: 768px) {
+    width: 16px;
+    height: 16px;
+    margin-left: 4px;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
 }
 
 // ── Right divider ──────────────────────────────────────────────────────
@@ -302,6 +496,10 @@
   align-self: stretch;
   flex-shrink: 0;
   margin-top: 24px;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
 }
 
 // ── Right: Quin Pods column ───────────────────────────────────────────
@@ -311,6 +509,20 @@
   padding-top: 24px;
   padding-left: 40px;
   padding-bottom: 40px;
+
+  @media (max-width: 1280px) {
+    width: 16rem;
+    padding-left: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 14rem;
+    padding-left: 16px;
+  }
+
+  @media (max-width: 900px) {
+    display: none;
+  }
 }
 
 .podsTitle {
@@ -320,19 +532,34 @@
   font-weight: 300;
   line-height: 38px;
   margin-bottom: 0;
-      display: flex;
-    justify-content: flex-start;
+  display: flex;
+  justify-content: flex-start;
+
+  @media (max-width: 1280px) {
+    font-size: 28px;
+    line-height: 32px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 22px;
+    line-height: 28px;
+  }
 }
 
 // ── Pod card ──────────────────────────────────────────────────────────
 .podCard {
   display: flex;
   align-items: flex-start;
-    gap: 25px;
-    padding: 20px 7px 20px 20px;
+  gap: 25px;
+  padding: 20px 7px 20px 20px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
 
   &:last-child { border-bottom: none; }
+
+  @media (max-width: 1024px) {
+    gap: 16px;
+    padding: 16px 4px 16px 12px;
+  }
 }
 
 .podInfo {
@@ -340,6 +567,14 @@
   flex-direction: column;
   gap: 10px;
   width: 202px;
+
+  @media (max-width: 1280px) {
+    width: 160px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 120px;
+  }
 }
 
 .podName {
@@ -348,6 +583,11 @@
   font-size: 22px;
   font-weight: 300;
   line-height: 26px;
+
+  @media (max-width: 1024px) {
+    font-size: 17px;
+    line-height: 22px;
+  }
 }
 
 .podMeta {
@@ -355,18 +595,22 @@
   font-size: 16px;
   font-weight: 300;
   line-height: 12px;
+
+  @media (max-width: 1024px) {
+    font-size: 13px;
+  }
 }
 
 .podMetaLabel {
   color: #47494A;
   display: flex;
-    justify-content: flex-start;
+  justify-content: flex-start;
 }
 
 .podMetaTime {
   color: #00C8DC;
   display: flex;
-    justify-content: flex-start;
+  justify-content: flex-start;
 }
 
 .podImageWrap {
@@ -377,6 +621,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 1024px) {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 .podImage {
@@ -384,6 +633,11 @@
   height: 127px;
   object-fit: contain;
   transition: transform 0.2s ease;
+
+  @media (max-width: 1024px) {
+    width: 90px;
+    height: 90px;
+  }
 }
 
 .podImagePlaceholder {

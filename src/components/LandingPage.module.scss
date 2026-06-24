@@ -18,16 +18,37 @@
 }
 
 // Scroll area sits below the fixed header.
-// `top` and `height` are set inline so it perfectly fills
-// the remaining viewport with no overflow and no clipping.
 .scrollContent {
-  position: fixed;   // fixed so top+height are relative to viewport
+  position: fixed;
   left: 0;
   right: 0;
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  // top and height set inline in component
   transition: top 0.3s ease, height 0.3s ease;
+}
+
+// ── Small screens: let the calendar scroll with content ───────────────
+@media (max-width: 768px) {
+  .page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .fixedHeader {
+    position: sticky;
+    top: 0;
+    // keep it above content while scrolling
+    z-index: 100;
+  }
+
+  .scrollContent {
+    position: static;
+    height: auto !important;
+    top: auto !important;
+    overflow-y: visible;
+    overflow-x: hidden;
+  }
 }
