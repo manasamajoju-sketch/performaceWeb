@@ -9,6 +9,7 @@ export interface ThrottleBrakeChartProps {
   lapData?: LapData[]
   throttlePercent?: number
   brakePercent?: number
-  throttleSpikes?: number
-  brakeSpikes?: number
+  throttleSpikes?: any
+  brakeSpikes?: any
+  playbackDuration?: string | number
 }

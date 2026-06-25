@@ -1,116 +1,51 @@
 import { useState } from "react";
 import styles from "./ThrottleBrakeChart.module.scss";
-import { SpikesChart } from "../SpikesChart";
 import type {
   ThrottleBrakeChartProps,
   LapData,
 } from "./ThrottleBrakeChart.types";
 
 const DEFAULT_LAP_DATA: LapData[] = [
-  { brake: 20 },
-  { brake: 35 },
-  { brake: 15 },
-  { brake: 42 },
-  { brake: 28 },
-  { brake: 18 },
-  { brake: 45 },
-  { brake: 30 },
-  { brake: 22 },
-  { brake: 38 },
-  { brake: 12 },
-  { brake: 48 },
-  { brake: 25 },
-  { brake: 40 },
-  { brake: 32 },
-  { brake: 20 },
-  { brake: 44 },
-  { brake: 28 },
-  { brake: 16 },
-  { brake: 36 },
-  { brake: 50 },
-  { brake: 24 },
-  { brake: 38 },
-  { brake: 14 },
-  { brake: 42 },
-  { brake: 30 },
-  { brake: 22 },
-  { brake: 46 },
-  { brake: 18 },
-  { brake: 34 },
-  { brake: 26 },
-  { brake: 40 },
+  { brake: 20 }, { brake: 35 }, { brake: 15 }, { brake: 42 },
+  { brake: 28 }, { brake: 18 }, { brake: 45 }, { brake: 30 },
+  { brake: 22 }, { brake: 38 }, { brake: 12 }, { brake: 48 },
+  { brake: 25 }, { brake: 40 }, { brake: 32 }, { brake: 20 },
+  { brake: 44 }, { brake: 28 }, { brake: 16 }, { brake: 36 },
+  { brake: 50 }, { brake: 24 }, { brake: 38 }, { brake: 14 },
+  { brake: 42 }, { brake: 30 }, { brake: 22 }, { brake: 46 },
+  { brake: 18 }, { brake: 34 }, { brake: 26 }, { brake: 40 },
 ].map((d) => ({ brake: d.brake, throttle: 100 - d.brake }));
+
 // Vertical gap, in px, carved out between the avg (bottom) and max (top) bar segments.
 const BAR_SEGMENT_GAP = 4;
 
-type View = "bars" | "spikes";
-
-// % of the chart width, measured from either edge, inside which the tooltip
-// flips from centered-on-bar to anchored-on-bar so it never clips outside
-// the chart. Tune to taste against the tooltip's actual rendered width.
 const TOOLTIP_EDGE_THRESHOLD = 15;
 
 type TooltipAlign = "left" | "right";
 
-interface StatRowProps {
+interface StatPanelProps {
   label: string;
   sublabel: string;
   percent: number;
-  spikes: number;
-  activeView: View;
-  onPercentClick: () => void;
-  onSpikesClick: () => void;
 }
 
-function StatRow({
-  label,
-  sublabel,
-  percent,
-  spikes,
-  activeView,
-  onPercentClick,
-  onSpikesClick,
-}: StatRowProps) {
+// Static stat display — no toggle now that Spikes lives in its own chart/card.
+function StatPanel({ label, sublabel, percent }: StatPanelProps) {
   return (
-    <div className={styles.statRow}>
-      <div className={styles.statLeft}>
+    <div className={styles.statPanel}>
+      <div className={styles.statLabelGroup}>
         <span className={styles.statLabel}>{label}</span>
         <span className={styles.statSublabel}>{sublabel}</span>
       </div>
 
-      <button
-        type="button"
-        className={`${styles.statCenter} ${activeView === "bars" ? styles.statCenterActive : ""}`}
-        onClick={onPercentClick}
-      >
-        <span
-          className={`${styles.statPercent} ${activeView === "bars" ? styles.statPercentActive : ""}`}
-        >
+      <div className={`${styles.statMetric} ${styles.statMetricActive}`}>
+        <span className={`${styles.statValue} ${styles.statValueActive}`}>
           {percent}%
         </span>
-        <span
-          className={`${styles.statSublabelSmall} ${activeView === "bars" ? styles.statSublabelSmallActive : ""}`}
-        >
+        <span className={`${styles.statMetricLabel} ${styles.statMetricLabelActive}`}>
           PERCENT
         </span>
-      </button>
-
-      <button
-        type="button"
-        className={`${styles.statRight} ${activeView === "spikes" ? styles.statRightActive : ""}`}
-        onClick={onSpikesClick}
-      >
-        <span
-          className={`${styles.statSpikes} ${activeView === "spikes" ? styles.statSpikesActive : ""}`}
-        >
-          {spikes}
-        </span>
-        <span
-          className={`${styles.statSublabelSmall} ${activeView === "spikes" ? styles.statSublabelSmallActive : ""}`}
-        >
-          SPIKES
-        </span>
-      </button>
+      </div>
     </div>
   );
 }
@@ -118,13 +53,10 @@ function StatRow({
 export function ThrottleBrakeChart({
   lapData = DEFAULT_LAP_DATA,
   throttlePercent = 60,
-  brakePercent = 40,
-  throttleSpikes = 40,
-  brakeSpikes = 30,
+  brakePercent = 60,
 }: ThrottleBrakeChartProps) {
   const [hoveredLap, setHoveredLap] = useState<number | null>(null);
   const [selectedLap, setSelectedLap] = useState<number | null>(null);
-  const [view, setView] = useState<View>("bars");
 
   const total = lapData.length;
   const activeLap = hoveredLap ?? selectedLap;
@@ -132,8 +64,6 @@ export function ThrottleBrakeChart({
   const handleBarClick = (i: number) =>
     setSelectedLap((prev) => (prev === i ? null : i));
 
-  // Both bars from bottom. Throttle = 100 - brake so they always sum to 100%
-  // Throttle avg line is average of all throttle values
   const avgThrottle = Math.round(
     lapData.reduce((s, l) => s + l.throttle, 0) / lapData.length,
   );
@@ -143,6 +73,7 @@ export function ThrottleBrakeChart({
 
   const yLabels = [
     { text: "100", bottom: 100, avg: false },
+    { text: "80", bottom: 80, avg: false },
     { text: "AVG", bottom: avgThrottle, avg: true },
     { text: "60", bottom: 60, avg: false },
     { text: "40", bottom: 40, avg: false },
@@ -150,6 +81,11 @@ export function ThrottleBrakeChart({
     { text: "20", bottom: 20, avg: false },
     { text: "0", bottom: 0, avg: false },
   ];
+
+  const xAxisLabels = Array.from({ length: 11 }, (_, index) => {
+    const lap = Math.max(1, Math.round(((index / 10) * (total - 1)) + 1));
+    return { key: `x-label-${index}`, label: `Lap ${lap}` };
+  });
 
   const activeLapPct =
     activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null;
@@ -164,46 +100,34 @@ export function ThrottleBrakeChart({
   }
 
   const tooltipAlignClass =
-    tooltipAlign === "left"
-      ? styles.tooltipAlignLeft
-      : tooltipAlign === "right"
-        ? styles.tooltipAlignRight
-        : styles.tooltipAlignRight; // default to right if somehow undefined
+    tooltipAlign === "left" ? styles.tooltipAlignLeft : styles.tooltipAlignRight;
 
   return (
     <div className={styles.card}>
-      {/* ── Acceleration ── */}
-      <StatRow
-        label="Acceleration"
-        sublabel="THROTTLING"
-        percent={throttlePercent}
-        spikes={throttleSpikes}
-        activeView={view}
-        onPercentClick={() => setView("bars")}
-        onSpikesClick={() => setView("spikes")}
-      />
-
-      <div className={styles.divider} />
-
-      {view === "spikes" ? (
-        <SpikesChart
-          lapData={lapData.map((l) => ({
-            throttleAvg: l.throttle,
-            brakeAvg: l.brake,
-          }))}
-          throttleAvg={avgThrottle}
-          brakeAvg={avgBrake}
-          throttleMax={100}
-          brakeMax={100}
+      {/* ── Top stat row: Acceleration left, Deceleration right ── */}
+      <div className={styles.statRow}>
+        <StatPanel
+          label="Acceleration"
+          sublabel="THROTTLING"
+          percent={throttlePercent}
         />
-      ) : (
+        <StatPanel
+          label="Deceleration"
+          sublabel="BRAKING"
+          percent={brakePercent}
+        />
+      </div>
+
+      {/* ── Chart fills remaining height ── */}
+      <div className={styles.chartSection}>
         <div className={styles.chartWrapper}>
           <div className={styles.chartOuter}>
-            <div className={styles.yAxis}>
+            {/* Left y-axis */}
+            <div className={styles.yAxisLeft}>
               {yLabels.map((l, i) => (
                 <span
-                  key={i}
-                  className={`${styles.yLabel} ${l.avg ? styles.yLabelAvg : ""}`}
+                  key={`left-${i}`}
+                  className={styles.yLabel}
                   style={{ bottom: `${l.bottom}%` }}
                 >
                   {l.text}
@@ -212,20 +136,9 @@ export function ThrottleBrakeChart({
             </div>
 
             <div className={styles.chartArea}>
-              <div
-                className={styles.avgLine}
-                style={{ bottom: `${avgThrottle}%` }}
-              >
-                <span className={styles.avgLineLabel}>{avgThrottle}%</span>
-              </div>
-
-              {/* Brake avg line */}
-              <div
-                className={styles.avgLine}
-                style={{ bottom: `${avgBrake}%` }}
-              >
-                <span className={styles.avgLineLabel}>{avgBrake}%</span>
-              </div>
+              {/* Avg lines */}
+              <div className={styles.avgLine} style={{ bottom: `${avgThrottle}%` }} />
+              <div className={styles.avgLine} style={{ bottom: `${avgBrake}%` }} />
 
               <div className={styles.barsScroll}>
                 <div className={styles.barsContainer}>
@@ -241,15 +154,10 @@ export function ThrottleBrakeChart({
                         onClick={() => handleBarClick(i)}
                       >
                         <div className={styles.barWrapper}>
-                          {/* Dark brake bar — bottom segment, 0% to brake% */}
                           <div
                             className={styles.darkBar}
                             style={{ height: `${lap.brake}%` }}
                           />
-                          {/* Teal throttle bar — top segment, stacked on top
-                              of the brake bar (brake% to 100%) so the pair
-                              always fills the full 0–100% column, since
-                              throttle = 100 - brake by definition. */}
                           <div
                             className={styles.tealBar}
                             style={{
@@ -271,34 +179,42 @@ export function ThrottleBrakeChart({
                 >
                   <div className={styles.tooltipTitle}>Lap {activeLap + 1}</div>
                   <div className={styles.tooltipTeal}>
-                    Acce: {lapData[activeLap].throttle}%
+                    ACCEL: {lapData[activeLap].throttle}%
                   </div>
                   <div className={styles.tooltipMuted}>
-                    Decel: {lapData[activeLap].brake}%
+                    DECEL: {lapData[activeLap].brake}%
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Right y-axis */}
+            <div className={styles.yAxisRight}>
+              {yLabels.map((l, i) => (
+                <span
+                  key={`right-${i}`}
+                  className={styles.yLabel}
+                  style={{ bottom: `${l.bottom}%` }}
+                >
+                  {l.text}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className={styles.xAxis}>
-            <span className={styles.xLabel}>Lap 1</span>
-            <span className={styles.xLabel}>Lap {total}</span>
+            {xAxisLabels.map((tick) => (
+              <span
+                key={tick.key}
+                className={styles.xLabel}
+                style={{ flex: 1, textAlign: "center" }}
+              >
+                {tick.label}
+              </span>
+            ))}
           </div>
         </div>
-      )}
-
-      <div className={styles.divider} />
-
-      <StatRow
-        label="Deceleration"
-        sublabel="BRAKING"
-        percent={brakePercent}
-        spikes={brakeSpikes}
-        activeView={view}
-        onPercentClick={() => setView("bars")}
-        onSpikesClick={() => setView("spikes")}
-      />
+      </div>
     </div>
   );
 }
