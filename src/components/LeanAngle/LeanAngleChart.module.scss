@@ -1,0 +1,246 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// ─── Card shell ───────────────────────────────────────────────────────────────
+.card {
+  background-color: #ffffff;
+  border-radius: $radius-card;
+  padding: $spacing-20;
+  width: 100%;
+  max-width: 100%;
+  // box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 270px;
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: $spacing-20;
+  flex-shrink: 0;
+}
+
+.statGroup {
+  display: flex;
+  align-items: center;
+  gap: $spacing-32;
+}
+
+.statLeft {
+  @include flex-column($spacing-2);
+  align-items: flex-start;
+  min-width: 90px;
+}
+
+.statLabel {
+  color: #1a1a1a;
+  font-size: 22px;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.01em;
+}
+
+.statSublabel {
+  @include label-uppercase;
+  color: $color-text-muted;
+}
+
+.statValue {
+  @include flex-column($spacing-2);
+  align-items: center;
+  min-width: 60px;
+}
+
+.statNumber {
+  font-size: 26px;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: #1a1a1a;
+}
+
+.statSubLabelSmall {
+  @include label-uppercase;
+  color: $color-text-muted;
+}
+
+// ─── Chart outer ──────────────────────────────────────────────────────────────
+.chartOuter {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.yAxisLeft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 37px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yAxisRight {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 37px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yLabel {
+  position: absolute;
+  right: 4px;
+  transform: translateY(50%);
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.yLabelRight {
+  position: absolute;
+  left: 4px;
+  transform: translateY(50%);
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+// ─── Chart canvas (between the two y-axes) ────────────────────────────────────
+.chartArea {
+  position: absolute;
+  left: 37px;
+  right: 37px;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+// ─── Reference lines ──────────────────────────────────────────────────────────
+.refLineMax {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  top: 2px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+}
+
+.refLineAvg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  top: 50%;
+  background: rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+// ─── Bars ─────────────────────────────────────────────────────────────────────
+// Each bar column is absolutely positioned within chartArea
+.barCol {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 8px; // spec: bar width 8px
+  cursor: crosshair;
+}
+
+// Left lean — anchored at 50% top, grows upward
+.leftBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 50%; // anchored to centre
+  border-radius: 4px 4px 0 0;
+  background-color: $color-teal;
+  transition: opacity 0.15s ease;
+}
+
+// Right lean — anchored at 50% top, grows downward
+.rightBar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%; // anchored to centre
+  border-radius: 0 0 4px 4px;
+  background-color: #1a3f6b;
+  transition: opacity 0.15s ease;
+}
+
+// ─── Playback cursor ──────────────────────────────────────────────────────────
+.playbackCursor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #4a8bf5;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+// ─── X-axis ───────────────────────────────────────────────────────────────────
+.xAxis {
+  @include flex-between;
+  padding: $spacing-16 37px 0;
+  flex-shrink: 0;
+}
+
+.xLabel {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+.tooltip {
+  position: absolute;
+  top: 5px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: $radius-tooltip;
+  padding: $spacing-8 $spacing-12;
+  font-size: 12px;
+  color: #1a1a1a;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  line-height: 1.8;
+}
+
+.tooltipAlignCenter { transform: translateX(-50%); }
+.tooltipAlignLeft   { transform: translateX(8px); }
+.tooltipAlignRight  { transform: translateX(calc(-100% - 8px)); }
+
+.tooltipTitle {
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-4;
+}
+
+.tooltipRow {
+  display: flex;
+  justify-content: space-between;
+  gap: $spacing-12;
+}
+
+.tooltipLeft  { color: $color-teal; font-weight: $font-weight-medium; }
+.tooltipRight { color: #1a3f6b;     font-weight: $font-weight-medium; }
+
+.tooltipPlayback {
+  top: auto;
+  bottom: $spacing-8;
+  background-color: rgba(74, 139, 245, 0.06);
+  border-color: #4a8bf5;
+}

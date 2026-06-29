@@ -9,7 +9,7 @@
   width: 100%;
   max-width: 100%;
   height: 270px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  // box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -115,7 +115,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: $spacing-32;
+  width: 37px;
   @include flex-column;
   justify-content: space-between;
   pointer-events: none;
@@ -124,7 +124,7 @@
 
 .yLabel {
   color: #B8B8B8;
-  font-size: $font-size-xs;
+  font-size: 10px;
   font-weight: $font-weight-medium;
   text-align: right;
   padding-right: $spacing-6;
@@ -148,8 +148,8 @@
 // ─── Chart area ───────────────────────────────────────────────────────────────
 .chartArea {
   position: absolute;
-  left: $spacing-32;
-  right: $spacing-32;
+  left: 37px;
+  right: 37px;
   top: 0;
   bottom: 0;
   // no overflow:hidden — lets tooltip escape
@@ -242,12 +242,12 @@
 // ─── X-axis ───────────────────────────────────────────────────────────────────
 .xAxis {
   @include flex-between;
-  padding: 0 $spacing-32;
+  padding: $spacing-16 37px 0;
 }
 
 .xLabel {
   color: $color-text-muted;
-  font-size: $font-size-sm;
+  font-size: 10px;
   font-weight: $font-weight-medium;
 }
 
@@ -266,7 +266,7 @@
 // ─── Tooltip ──────────────────────────────────────────────────────────────────
 .tooltip {
   position: absolute;
-  top: 8px;
+  top: 5px;
   background-color: $color-tooltip-bg;
   border: 1px solid $color-teal;
   border-radius: $radius-tooltip;

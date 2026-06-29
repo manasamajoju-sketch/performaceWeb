@@ -1,103 +1,242 @@
-import styles from './LapTimeChart.module.scss'
-import type { LapDot } from '../SessionDetail/SessionDetail.types'
+import { useState } from "react";
+import styles from "./LapTimeChart.module.scss";
+import type {
+  LapTimeProps,
+  LapTimeDataPoint,
+  LapTimeYAxisLabel,
+  LapTimeRefLine,
+} from "./LapTimeChart.types";
 
-interface LapTimelineProps {
-  dots: LapDot[]
-  activeLap?: number | null
-  onLapClick?: (lap: number) => void
-  // Header stats — previously rendered by SessionDetail as a separate
-  // `lapAnalysisHeader` block; moved in here so the title/stats live next
-  // to the timeline they describe.
-  lapCount?: number
-  pitLap?: number
-  hotLap?: number
+// 61 points at 8px bar + 8px gap (16px period) fills the 966px chart area
+// almost exactly (61*16 - 8 = 968px) — this is the actual fix for bars not
+// reaching the right edge; the bars themselves stay a fixed size per spec,
+// rather than stretching to fill whatever width is available.
+const DEFAULT_DATA: LapTimeDataPoint[] = Array.from({ length: 61 }, (_, i) => {
+  const value = 15 + Math.round(Math.abs(Math.sin(i * 0.7)) * 55);
+  return { value };
+});
+
+const DEFAULT_Y_AXIS: LapTimeYAxisLabel[] = [
+  { text: "100%", percent: 100 },
+  { text: "80%", percent: 80 },
+  { text: "60%", percent: 60 },
+  { text: "40%", percent: 40 },
+  { text: "20%", percent: 20 },
+  { text: "0%", percent: 0 },
+];
+
+const DEFAULT_REF_LINES: LapTimeRefLine[] = [
+  { label: "MAX", value: "09:30", percent: 75 },
+  { label: "AVG", value: "05:30", percent: 25 },
+];
+
+// Distance, in %, from either edge within which a tooltip anchors against
+// its bar instead of centering on it, so it never clips off the chart.
+const TOOLTIP_EDGE_THRESHOLD = 15;
+
+// How far (px) a tooltip floats above the top of its active bar.
+const TOOLTIP_BAR_GAP = 5;
+
+type TooltipAlign = "left" | "center" | "right";
+
+function getTooltipAlign(pct: number): TooltipAlign {
+  if (pct <= TOOLTIP_EDGE_THRESHOLD) return "left";
+  if (pct >= 100 - TOOLTIP_EDGE_THRESHOLD) return "right";
+  return "center";
 }
 
-// Color mapping per lap type matching the reference image
-const dotColor = (type: LapDot['type'], active: boolean) => {
-  if (active) return '#33cccc'
-  switch (type) {
-    case 'pit':    return '#111318'
-    case 'hot':    return '#1a2a3a'
-    case 'outlap': return '#7fe8e8'
-    default:       return '#2a4a5a'
-  }
+function alignClass(styleMap: Record<string, string>, align: TooltipAlign) {
+  return align === "left"
+    ? styleMap.tooltipAlignLeft
+    : align === "right"
+      ? styleMap.tooltipAlignRight
+      : styleMap.tooltipAlignCenter;
 }
 
-export function LapTimeline({
-  dots,
-  activeLap,
-  onLapClick,
-  lapCount,
-  pitLap,
-  hotLap,
-}: LapTimelineProps) {
+// Opacity matrix per spec sections 6-8:
+//   resting (nothing active):        all bars 100%
+//   hover only:                      hovered 100%, others 20%
+//   playback only:                   playback bar 100%, others 20%
+//   playback + hover (different):    playback 100%, hovered 60%, others 20%
+function getBarOpacity(
+  i: number,
+  hoveredIndex: number | null,
+  playbackIndex: number | null | undefined,
+): number {
+  const isPlayback = playbackIndex != null && playbackIndex === i;
+  const isHovered = hoveredIndex === i;
+  if (isPlayback) return 1;
+  if (isHovered) return playbackIndex != null ? 0.6 : 1;
+  if (hoveredIndex !== null || playbackIndex != null) return 0.2;
+  return 1;
+}
+
+export function LapTime({
+  label = "Lap Time",
+  sublabel = "MM:SS",
+  avgValue = "5:30",
+  maxValue = "5:30",
+  data = DEFAULT_DATA,
+  yAxisLabels = DEFAULT_Y_AXIS,
+  refLines = DEFAULT_REF_LINES,
+  xAxisLabels,
+  playbackIndex = null,
+}: LapTimeProps) {
+  // Hover/click are local UI state. playbackIndex is controlled externally —
+  // neither one ever touches avgValue/maxValue: the header is a session
+  // summary and must not change on hover or during playback (Core Rule).
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const total = data.length;
+  const hoverActive = hoveredIndex ?? selectedIndex;
+
+  const handleBarClick = (i: number) =>
+    setSelectedIndex((prev) => (prev === i ? null : i));
+
+  const xTicks = xAxisLabels ?? Array.from({ length: 12 }, () => "00:00");
+
+  const hoverPct =
+    hoverActive !== null ? ((hoverActive + 0.5) / total) * 100 : null;
+  const playbackPct =
+    playbackIndex != null ? ((playbackIndex + 0.5) / total) * 100 : null;
+
   return (
-    <div className={styles.wrapper}>
-
-      {/* Header — title + COUNT / PIT LAP / HOT LAP stats */}
+    <div className={styles.card}>
+      {/* ── Header — session summary only, never updates on hover/playback ── */}
       <div className={styles.header}>
-        <span className={styles.title}>Lap Analysis</span>
-
-        <div className={styles.stat}>
-          <span className={styles.statValue}>
-            {String(lapCount ?? dots.length).padStart(2, '0')}
-          </span>
-          <span className={styles.statSub}>COUNT</span>
+        <div className={styles.headerLeft}>
+          <span className={styles.label}>{label}</span>
+          <span className={styles.sublabel}>{sublabel}</span>
         </div>
-
-        <div className={styles.stat}>
-          <span className={styles.statValue}>
-            {String(pitLap ?? 0).padStart(2, '0')}
-          </span>
-          <span className={styles.statSub}>PIT LAP</span>
+        <div className={styles.statValue}>
+          <span className={styles.statNumber}>{avgValue}</span>
+          <span className={styles.statSublabel}>AVG</span>
         </div>
-
-        <div className={styles.stat}>
-          <span className={styles.statValue}>
-            {String(hotLap ?? 0).padStart(2, '0')}
-          </span>
-          <span className={styles.statSub}>HOT LAP</span>
+        <div className={styles.statValue}>
+          <span className={styles.statNumber}>{maxValue}</span>
+          <span className={styles.statSublabel}>MAX</span>
         </div>
       </div>
 
-      {/* Pit lap markers — dashed connector down to the actual pit dot */}
-      <div className={styles.markers}>
-        {dots.map(d => (
-          <div key={d.lap} className={styles.markerSlot}>
-            {d.type === 'pit' && (
-              <>
-                <span className={styles.pitLabel}>PIT LAP</span>
-                <span className={styles.pitConnector} />
-              </>
-            )}
+      {/* ── Chart ── */}
+      <div className={styles.chartOuter}>
+        <div className={styles.yAxisLeft}>
+          {yAxisLabels.map((l, i) => (
+            <span
+              key={i}
+              className={styles.yLabel}
+              style={{ bottom: `${l.percent}%` }}
+            >
+              {l.text}
+            </span>
+          ))}
+        </div>
+
+        <div className={styles.yAxisRight}>
+          {yAxisLabels.map((l, i) => (
+            <span
+              key={i}
+              className={styles.yLabel}
+              style={{ bottom: `${l.percent}%` }}
+            >
+              {l.text}
+            </span>
+          ))}
+        </div>
+
+        <div className={styles.chartArea}>
+          <div className={styles.gridOverlay} />
+
+          {refLines.map((ref, i) => (
+            <div
+              key={i}
+              className={styles.refLine}
+              style={{ bottom: `${ref.percent}%` }}
+            >
+              <span className={styles.refLineLabel}>{ref.label}</span>
+              <span className={styles.refLineValue}>{ref.value}</span>
+            </div>
+          ))}
+
+          <div className={styles.barsScroll}>
+            <div className={styles.barsContainer}>
+              {data.map((point, i) => (
+                <div
+                  key={i}
+                  className={styles.barCol}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  onClick={() => handleBarClick(i)}
+                >
+                  <div
+                    className={styles.bar}
+                    style={{
+                      height: `${point.value}%`,
+                      opacity: getBarOpacity(i, hoverActive, playbackIndex),
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
 
-      {/* Dot row */}
-      <div className={styles.dots}>
-        {dots.map(d => (
-          <button
-            key={d.lap}
-            className={styles.dot}
-            style={{ backgroundColor: dotColor(d.type, activeLap === d.lap) }}
-            onClick={() => onLapClick?.(d.lap)}
-            aria-label={`Lap ${d.lap}${d.type !== 'normal' ? ` (${d.type})` : ''}`}
-          />
-        ))}
-      </div>
+          {/* Playback cursor — solid 2px line in Quin Blue, independent of
+              and rendered alongside any hover state. */}
+          {playbackPct !== null && (
+            <div
+              className={styles.playbackCursor}
+              style={{ left: `${playbackPct}%` }}
+            />
+          )}
 
-      {/* Lap number labels below */}
-      <div className={styles.labels}>
-        {dots.map((d, i) => (
-          <div key={d.lap} className={styles.labelSlot}>
-            {(i === 0 || i === Math.floor(dots.length / 2) || i === dots.length - 1) && (
-              <span className={styles.lapLabel}>Lap {d.lap}</span>
+          {/* Playback tooltip — visible whenever playback is running,
+              regardless of hover. */}
+          {playbackIndex != null && playbackPct !== null && (
+            <div
+              className={`${styles.tooltip} ${alignClass(styles, getTooltipAlign(playbackPct))}`}
+              style={{
+                left: `${playbackPct}%`,
+                bottom: `calc(${data[playbackIndex].value}% + ${TOOLTIP_BAR_GAP}px)`,
+              }}
+            >
+              <div className={styles.tooltipTitle}>Lap {playbackIndex + 1}</div>
+              <div className={styles.tooltipValue}>
+                {data[playbackIndex].timeLabel ?? `${data[playbackIndex].value}%`}
+              </div>
+            </div>
+          )}
+
+          {/* Hover tooltip — separate from the playback tooltip; both can
+              be visible at once when playback is running and the user
+              hovers a different bar. */}
+          {hoverActive !== null &&
+            hoverActive !== playbackIndex &&
+            hoverPct !== null && (
+              <div
+                className={`${styles.tooltip} ${alignClass(styles, getTooltipAlign(hoverPct))}`}
+                style={{
+                  left: `${hoverPct}%`,
+                  bottom: `calc(${data[hoverActive].value}% + ${TOOLTIP_BAR_GAP}px)`,
+                }}
+              >
+                <div className={styles.tooltipTitle}>Lap {hoverActive + 1}</div>
+                <div className={styles.tooltipValue}>
+                  {data[hoverActive].timeLabel ?? `${data[hoverActive].value}%`}
+                </div>
+              </div>
             )}
-          </div>
+        </div>
+      </div>
+
+      {/* ── X-Axis ── */}
+      <div className={styles.xAxis}>
+        {xTicks.map((t, i) => (
+          <span key={i} className={styles.xLabel}>
+            {t}
+          </span>
         ))}
       </div>
     </div>
-  )
+  );
 }

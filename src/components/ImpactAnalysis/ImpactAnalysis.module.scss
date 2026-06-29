@@ -1,0 +1,188 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+.card {
+  background-color: $color-card;
+  border-radius: $radius-card;
+  padding: $spacing-16 $spacing-20;
+  width: 100%;
+  max-width: 100%;
+  height: 270px;
+  box-sizing: border-box;
+  // box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-8;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  @include flex-column($spacing-2);
+  align-items: flex-start;
+  min-width: 110px;
+}
+
+.headerLabel {
+  color: $color-text;
+  font-size: 18px;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.01em;
+}
+
+.headerUnit {
+  @include label-uppercase;
+  color: $color-text-muted;
+}
+
+.statGroup {
+  @include flex-column($spacing-2);
+  align-items: center;
+  min-width: 48px;
+}
+
+.statNumber {
+  font-size: 20px;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+  color: $color-text;
+}
+
+.statSubLabel {
+  @include label-uppercase;
+  color: $color-text-muted;
+}
+
+.axisStats {
+  margin-left: auto;
+  display: flex;
+  gap: $spacing-32;
+}
+
+.axisDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin: 0 auto $spacing-2;
+}
+
+.dotCyan   { background-color: #33CCDD; }
+.dotGreen  { background-color: #7ED321; }
+.dotPurple { background-color: #6B3FD4; }
+
+.chartOuter {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.yAxisLeft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yAxisRight {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yLabel {
+  position: absolute;
+  right: $spacing-6;
+  transform: translateY(50%);
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+}
+
+.yLabelBold {
+  font-weight: $font-weight-bold;
+  color: #999999;
+}
+
+.yLabelRight {
+  position: absolute;
+  left: $spacing-6;
+  transform: translateY(50%);
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1.3;
+  text-align: left;
+}
+
+.chartArea {
+  position: absolute;
+  left: $spacing-32;
+  right: $spacing-32;
+  top: 0;
+  bottom: 0;
+}
+
+.refLine {
+  @include dashed-line;
+}
+
+.svgLayer {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.hoverLine {
+  stroke: rgba(255, 255, 255, 0.2);
+}
+
+.lineCyan   { stroke: #33CCDD; }
+.lineGreen  { stroke: #7ED321; }
+.linePurple { stroke: #6B3FD4; }
+
+.xAxis {
+  @include flex-between;
+  padding: 0 $spacing-32;
+  flex-shrink: 0;
+}
+
+.xLabel {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.tooltip {
+  position: absolute;
+  top: $spacing-8;
+  background-color: $color-tooltip-bg;
+  border: 1px solid $color-teal;
+  border-radius: $radius-tooltip;
+  padding: $spacing-6 $spacing-10;
+  font-size: 11px;
+  color: $color-text;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+  line-height: 1.7;
+}
+
+.tooltipAlignLeft  { transform: translateX(0); }
+.tooltipAlignRight { transform: translateX(-100%); }
+
+.tooltipTitle  { font-weight: $font-weight-bold; margin-bottom: 1px; }
+.tooltipCyan   { color: #33CCDD; }
+.tooltipGreen  { color: #7ED321; }
+.tooltipPurple { color: #6B3FD4; }

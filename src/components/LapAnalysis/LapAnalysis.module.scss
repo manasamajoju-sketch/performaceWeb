@@ -8,7 +8,7 @@
   width: 100%;
   max-width: 100%;
   height: 270px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    // box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -98,7 +98,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  width: $spacing-32;
+  width: 37px;
   pointer-events: none;
   z-index: 3;
 }
@@ -108,7 +108,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  width: $spacing-32;
+  width: 37px;
   pointer-events: none;
   z-index: 3;
 }
@@ -118,7 +118,7 @@
   right: $spacing-6;
   transform: translateY(50%);
   color: $color-text-muted;
-  font-size: $font-size-xs;
+  font-size: 10px;
   font-weight: $font-weight-medium;
   line-height: 1;
 }
@@ -136,8 +136,8 @@
 
 .chartArea {
   position: absolute;
-  left: $spacing-32;
-  right: $spacing-32;
+  left: 37px;
+  right: 37px;
   top: $spacing-8;
   bottom: 0;
 }
@@ -152,14 +152,14 @@
   inset: 0;
   display: flex;
   align-items: flex-end;
-  gap: 10px;
+  gap: 8px;
 }
 
 .barCol {
   position: relative;
-  flex: 1;
-  min-width: 6px;
-  max-width: 16px;
+  flex: 0 0 18px;
+  min-width: 18px;
+  max-width: 18px;
   height: 100%;
   cursor: pointer;
   display: flex;
@@ -185,7 +185,7 @@
 
 // Muted when a *different* lap is hovered/selected (existing behavior).
 .barMuted {
-  opacity: 0.25;
+  opacity: 0.2;
 }
 
 // De-emphasized when the *other* metric (AVG/MAX) is toggled on — gives
@@ -210,7 +210,7 @@
 // ─── X-Axis ───────────────────────────────────────────────────────────────────
 .xAxis {
   @include flex-between;
-  padding: $spacing-8 $spacing-32 0;
+  padding: $spacing-16 37px 0;
   flex-shrink: 0;
 }
 
@@ -223,7 +223,7 @@
 // ─── Tooltip ──────────────────────────────────────────────────────────────────
 .tooltip {
   position: absolute;
-  top: $spacing-8;
+  top: 5px;
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: $radius-tooltip;

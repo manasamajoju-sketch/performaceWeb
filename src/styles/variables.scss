@@ -11,6 +11,7 @@ $color-text-muted:   #555555;
 $color-avg-line:     #7a8099;
 $color-bar-line: #ebedf2;
 $color-tooltip-bg:   #ffffff;
+$color-divider-light: #000000;
 
 // ─── Typography — Suisse Intl ─────────────────────────────────────────────────
 // Fonts loaded via @font-face in src/styles/_fonts.scss → global.scss
@@ -23,6 +24,8 @@ $font-size-stat:     26px;
 $font-weight-medium: 500;
 $font-weight-semi:   600;
 $font-weight-bold:   700;
+$font-weight-light:   300;
+$font-weight-regular: 400;
 
 // ─── Spacing ──────────────────────────────────────────────────────────────────
 $spacing-2:   2px;

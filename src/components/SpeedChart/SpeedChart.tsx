@@ -118,7 +118,7 @@ export function SpeedChart({
         </button>
       </div>
 
-      <div className={styles.divider} />
+      {/* <div className={styles.divider} /> */}
 
       {/* ── Chart ── */}
       <div className={styles.chartWrapper}>

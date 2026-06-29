@@ -1,119 +1,197 @@
 @use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
-.wrapper {
+.card {
+  background-color: $color-card;
+  border-radius: $radius-card;
+  padding: $spacing-20 $spacing-20 $spacing-16;
   width: 100%;
-  @include flex-column($spacing-4);
+  max-width: 100%;
 }
 
-// ─── Header — title + COUNT / PIT LAP / HOT LAP stats ────────────────────────
-// Moved in from SessionDetail's old `lapAnalysisHeader` block so the title
-// and stats live alongside the timeline they describe.
+// ─── Header ─────────────────────────────────────────────────────────────────────
 .header {
-  @include flex-row(flex-end, $spacing-24);
-  padding-bottom: $spacing-8;
-  margin-bottom: $spacing-8;
+  @include flex-row(center, $spacing-12);
+  padding: $spacing-20 0 $spacing-8;
 }
 
-.title {
-  font-size: 13px;
-  font-weight: $font-weight-medium;
-  color: $color-text;
-  margin-right: auto;
-}
-
-.stat {
+.headerLeft {
   @include flex-column($spacing-2);
+  align-items: flex-start;
+}
+
+.label {
+  color: $color-text;
+  font-size: $font-size-md;
+  font-weight: $font-weight-light;
+}
+
+.sublabel {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-light;
 }
 
 .statValue {
-  font-size: 22px;
-  font-weight: $font-weight-semi;
+  @include flex-column($spacing-2);
+  align-items: center;
+  min-width: 100px;
+}
+
+.statNumber {
   color: $color-text;
+  font-size: 24px;
+  font-weight: $font-weight-light;
   line-height: 1;
 }
 
-.statSub {
-  font-size: 9px;
-  font-weight: $font-weight-semi;
-  letter-spacing: 0.1em;
+.statSublabel {
   color: $color-text-muted;
-  text-transform: uppercase;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-light;
 }
 
-// ─── Pit lap markers ──────────────────────────────────────────────────────────
-.markers {
+// ─── Chart layout ───────────────────────────────────────────────────────────────
+.chartOuter {
+  position: relative;
+  height: 149px;
+}
+
+.yAxisLeft {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yAxisRight {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: $spacing-32;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.yLabel {
+  position: absolute;
+  right: $spacing-6;
+  color: rgba(0, 0, 0, 0.2);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-align: right;
+  line-height: 1;
+  transform: translateY(50%);
+}
+
+.chartArea {
+  position: absolute;
+  left: $spacing-32;
+  right: $spacing-32;
+  top: 0;
+  bottom: 0;
+}
+
+// Same grid spec as ThrottleBrakeChart's Figma reference: vertical lines
+// every 80px (5 bar-slots at 8px bar + 8px gap), horizontal every 20%.
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 20%
+    );
+}
+
+// ─── Reference lines ──────────────────────────────────────────────────────────
+// Solid (not dashed) per the Figma reference, with a label on the left and
+// a time value on the right.
+.refLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  border-top: 1px solid #a3a3a3;
+}
+
+.refLineLabel {
+  position: absolute;
+  left: -$spacing-32;
+  top: -8px;
+  width: $spacing-32;
+  text-align: left;
+  color: $color-text-muted;
+  font-size: 12px;
+  font-weight: $font-weight-regular;
+}
+
+.refLineValue {
+  position: absolute;
+  right: -$spacing-32;
+  top: -8px;
+  width: $spacing-32;
+  text-align: right;
+  color: $color-text;
+  font-size: 12px;
+  font-weight: $font-weight-light;
+}
+
+// ─── Bars ─────────────────────────────────────────────────────────────────────
+.barsContainer {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: flex-end;
-  gap: 4px;
-  height: 28px;
+  gap: 5px;
 }
 
-.markerSlot {
-  flex: 0 0 auto;
-  width: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.barCol {
   position: relative;
-}
-
-.pitLabel {
-  font-size: 7px;
-  font-weight: $font-weight-medium;
-  color: $color-text-muted;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  text-transform: uppercase;
-}
-
-// Dashed line connecting the "PIT LAP" label down to its dot
-.pitConnector {
-  width: 0;
   flex: 1;
-  border-left: 1px dashed $color-divider;
-  margin-top: 2px;
-}
-
-.dots {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-// Fixed equal width/height (not flex: 1 + a separate height) so
-// border-radius: 50% always rounds a true circle instead of an oval
-// that stretches with however much horizontal space each dot's flex
-// slot happens to get.
-.dot {
-  flex: 0 0 auto;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: none;
+  min-width: 4px;
+  max-width: 24px;
+  height: 100%;
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.1s;
-
-  &:hover {
-    transform: scale(1.15);
-  }
+  transition: opacity 0.15s;
 }
 
-.labels {
+.barColFaded { opacity: 0.4; }
+
+.bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $color-teal;
+  border-radius: 4px;
+  transition: height 0.3s ease;
+}
+
+// ─── X-Axis ───────────────────────────────────────────────────────────────────
+.xAxis {
   display: flex;
-  gap: 4px;
+  justify-content: space-between;
+  padding: $spacing-8 $spacing-32 0;
 }
 
-.labelSlot {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.lapLabel {
-  font-size: 8px;
-  color: $color-text-muted;
-  white-space: nowrap;
+.xLabel {
+  color: rgba(0, 0, 0, 0.2);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-light;
 }
