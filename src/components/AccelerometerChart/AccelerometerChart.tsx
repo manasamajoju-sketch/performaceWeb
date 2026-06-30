@@ -12,12 +12,11 @@ const DEFAULT_DATA: AxisDataPoint[] = Array.from({ length: 48 }, (_, i) => {
 })
 
 const TOOLTIP_EDGE_THRESHOLD = 15
+const SEGMENT_GAP_PCT = 2.5 // visual gap between the cyan base and the colored cap, in % of chart height
 type TooltipAlign = 'left' | 'right'
 
-function dominantAxis(p: AxisDataPoint): 'x' | 'y' | 'z' {
-  if (p.x >= p.y && p.x >= p.z) return 'x'
-  if (p.y >= p.x && p.y >= p.z) return 'y'
-  return 'z'
+function capAxis(p: AxisDataPoint): 'y' | 'z' {
+  return p.y >= p.z ? 'y' : 'z'
 }
 
 export function AccelerometerChart({
@@ -107,18 +106,36 @@ export function AccelerometerChart({
 
           <div className={styles.barsLayer}>
             {data.map((p, i) => {
-              const axis = dominantAxis(p)
-              const value = Math.max(p.x, p.y, p.z)
+              const cAxis = capAxis(p)
+              const capVal = cAxis === 'y' ? p.y : p.z
+              const baseValue = p.x
               const faded = active !== null && active !== i
+
+              const basePct = toPercent(baseValue)
+              const totalPct = toPercent(Math.max(p.x, p.y, p.z))
+              const hasCap = capVal > baseValue
+              const capBottomPct = basePct + SEGMENT_GAP_PCT
+              const capHeightPct = Math.max(0, totalPct - capBottomPct)
+
               return (
                 <div
                   key={i}
-                  className={`${styles.bar} ${barColorClass(axis)} ${faded ? styles.barFaded : ''}`}
-                  style={{ height: `${toPercent(value)}%` }}
+                  className={styles.barWrap}
                   onMouseEnter={() => setHovered(i)}
                   onMouseLeave={() => setHovered(null)}
                   onClick={() => setSelected((prev) => (prev === i ? null : i))}
-                />
+                >
+                  <div
+                    className={`${styles.bar} ${styles.barBase} ${barColorClass('x')} ${faded ? styles.barFaded : ''}`}
+                    style={{ height: `${basePct}%` }}
+                  />
+                  {hasCap && (
+                    <div
+                      className={`${styles.bar} ${styles.barCap} ${barColorClass(cAxis)} ${faded ? styles.barFaded : ''}`}
+                      style={{ height: `${capHeightPct}%`, bottom: `${capBottomPct}%` }}
+                    />
+                  )}
+                </div>
               )
             })}
           </div>

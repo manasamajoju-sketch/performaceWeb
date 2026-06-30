@@ -146,13 +146,29 @@
   gap: 2px;
 }
 
-.bar {
+.barWrap {
+  position: relative;
   flex: 1;
   min-width: 3px;
   max-width: 10px;
-  border-radius: 2px;
+  height: 100%;
   cursor: pointer;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-radius: 2px;
   transition: opacity 0.15s;
+}
+
+.barBase {
+  bottom: 0;
+}
+
+.barCap {
+  // bottom is set inline per data point
 }
 
 .barFaded {
