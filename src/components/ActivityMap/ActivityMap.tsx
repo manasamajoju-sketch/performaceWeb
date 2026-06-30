@@ -62,31 +62,12 @@ function buildSpeedLegend(maxSpeedKmh: number): SpeedRange[] | null {
   }))
 }
 
-// ─── Play / Pause icons ───────────────────────────────────────────────────────
-function PlayIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-      <path d="M3 1.5l10 5.5-10 5.5V1.5z" />
-    </svg>
-  )
-}
-
-function PauseIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-      <rect x="2" y="1" width="4" height="12" rx="1" />
-      <rect x="8" y="1" width="4" height="12" rx="1" />
-    </svg>
-  )
-}
-
 // ─── ActivityMap ──────────────────────────────────────────────────────────────
 export default function ActivityMap({
   locations,
   playbackMs,
   ready,
   playing,
-  onTogglePlay,
 }: ActivityMapProps) {
   const [leafletReady, setLeafletReady] = useState(false)
 

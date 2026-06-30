@@ -4,11 +4,10 @@ import { ThrottleBrakeChart } from "../ThrottleBrakeChart";
 import { SpeedChart } from "../SpeedChart";
 import { LapTime } from "../LapTimeChart";
 import { SpikesChart } from "../SpikesChart";
-import { SessionGraph } from "../LapAnalysis";
 import ActivityMap from "../ActivityMap";
 import type {
   SessionDetailProps,
-  LapDot,
+  // LapDot,
   StreamLocationPoint,
 } from "./SessionDetail.types";
 import LeanAngleChart from "../LeanAngle";
@@ -29,26 +28,26 @@ function polylineToLocations(
   }));
 }
 
-function generateLapDots(
-  count: number,
-  pitLap?: number,
-  hotLap?: number,
-): LapDot[] {
-  return Array.from({ length: count }, (_, i) => {
-    const lap = i + 1;
-    if (lap === pitLap) return { lap, type: "pit" as const };
-    if (lap === hotLap) return { lap, type: "hot" as const };
-    if (lap === 1) return { lap, type: "outlap" as const };
-    return { lap, type: "normal" as const };
-  });
-}
+// function generateLapDots(
+//   count: number,
+//   pitLap?: number,
+//   hotLap?: number,
+// ): LapDot[] {
+//   return Array.from({ length: count }, (_, i) => {
+//     const lap = i + 1;
+//     if (lap === pitLap) return { lap, type: "pit" as const };
+//     if (lap === hotLap) return { lap, type: "hot" as const };
+//     if (lap === 1) return { lap, type: "outlap" as const };
+//     return { lap, type: "normal" as const };
+//   });
+// }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 type TabView = "overview" | "lapview";
 
 export function SessionDetail({ session, onBack }: SessionDetailProps) {
   const [tab, setTab] = useState<TabView>("overview");
-  const [activeLap, setActiveLap] = useState<number | null>(null);
+  // const [activeLap, setActiveLap] = useState<number | null>(null);
   const [playing, setPlaying] = useState(false);
   const [playbackMs, setPlaybackMs] = useState(0);
   const [mapReady, setMapReady] = useState(false);
@@ -91,13 +90,13 @@ export function SessionDetail({ session, onBack }: SessionDetailProps) {
 
   const handleTogglePlay = useCallback(() => setPlaying((p) => !p), []);
 
-  const lapDots =
-    session.lapDots ??
-    generateLapDots(
-      session.laps ?? 32,
-      session.pitLap ?? 3,
-      session.hotLap ?? 19,
-    );
+  // const lapDots =
+  //   session.lapDots ??
+  //   generateLapDots(
+  //     session.laps ?? 32,
+  //     session.pitLap ?? 3,
+  //     session.hotLap ?? 19,
+  //   );
 
   return (
     <div className={styles.page}>

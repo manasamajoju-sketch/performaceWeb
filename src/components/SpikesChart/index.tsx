@@ -1,2 +1,2 @@
 export { SpikesChart } from './SpikesChart'
-export type { SpikesChartProps, SpikeLapData } from './SpikesChart.types'
+export type { SpikesChartProps } from './SpikesChart.types'

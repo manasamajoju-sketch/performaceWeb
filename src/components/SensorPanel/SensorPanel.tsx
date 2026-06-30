@@ -41,7 +41,7 @@ function generateDemoOrientation(count = 200): OrientationFrame[] {
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export function SensorPanel({ data, playbackMs, playing, totalMs }: SensorPanelProps) {
+export function SensorPanel({ data, playbackMs }: SensorPanelProps) {
   const [helmetReset, setHelmetReset] = useState(0)
 
   const orientationFrames = useMemo(
