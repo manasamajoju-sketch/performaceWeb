@@ -135,6 +135,7 @@ export function SpeedChart({
 
           {/* Chart body */}
           <div className={styles.chartArea}>
+            <div className={styles.gridOverlay} />
 
             {/* MAX reference line */}
             <div className={styles.refLine} style={{ bottom: `${maxLineBottom}%` }}>

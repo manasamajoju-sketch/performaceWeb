@@ -1,0 +1,175 @@
+.profilePage {
+  width: 100%;
+  min-height: 100vh;
+  background: #f8fafb;
+}
+
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background: #f7f9fb;
+  box-sizing: border-box;
+}
+
+.profile {
+  width: 100%;
+  background: #ffffff;
+  padding: 50px 40px 0 80px;
+  box-sizing: border-box;
+  font-family: 'Suisse Intl', sans-serif;
+}
+
+// ── Header ───────────────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+      padding: 9px;
+}
+
+.avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #00c8dc;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerName {
+  font-size: 22px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+// ── Layout ───────────────────────────────────────────────────────────
+.content {
+  display: flex;
+  gap: 60px;
+  justify-content: center;
+}
+
+.leftColumn {
+  flex: 1;
+  max-width: 460px;
+}
+
+.rightColumn {
+  flex: 1;
+  max-width: 400px;
+  border-left: 1px solid #eee;
+  padding: 72px 20px;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 24px 0;
+}
+
+// ── Sections ─────────────────────────────────────────────────────────
+.section {
+  margin-bottom: 40px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 500;
+  color: #1a1a1a;
+    display: flex;
+}
+
+.editLink {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 20px;
+
+  &:hover {
+    color: #00c8dc;
+  }
+}
+
+// ── Rows (personal info / preferences) ──────────────────────────────
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.label {
+  font-size: 14px;
+  color: #666;
+}
+
+.value {
+  font-size: 14px;
+  color: #1a1a1a;
+}
+
+.dropdownTrigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #999;
+  font-family: inherit;
+
+  &:hover {
+    color: #00c8dc;
+  }
+}
+
+.chevron {
+  width: 12px;
+  height: auto;
+}
+
+// ── Lists (devices / pods) ──────────────────────────────────────────
+.listItem {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.itemName {
+  font-size: 14px;
+  color: #1a1a1a;
+  margin-bottom: 2px;
+      display: flex;
+    justify-content: flex-start;
+}
+
+.itemMeta {
+  font-size: 12px;
+  color: #aaa;
+      display: flex;
+    justify-content: flex-start;
+}

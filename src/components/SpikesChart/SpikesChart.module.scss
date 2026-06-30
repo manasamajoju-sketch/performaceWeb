@@ -155,6 +155,27 @@
   // no overflow:hidden — lets tooltip escape
 }
 
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 20%
+    );
+}
+
 // ─── Centre line ──────────────────────────────────────────────────────────────
 .centerLine {
   position: absolute;

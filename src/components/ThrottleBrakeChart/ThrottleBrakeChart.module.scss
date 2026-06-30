@@ -163,6 +163,27 @@
   min-width: 0;
 }
 
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 20%
+    );
+}
+
 // ─── Avg lines ────────────────────────────────────────────────────────────────
 .avgLine {
   @include dashed-line;
@@ -187,6 +208,7 @@
   align-items: flex-end;
   height: 100%;
   gap: 8px;
+  width: 100%;
   min-width: max-content;
 }
 

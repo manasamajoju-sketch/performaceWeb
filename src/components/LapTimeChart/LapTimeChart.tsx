@@ -53,11 +53,6 @@ function alignClass(styleMap: Record<string, string>, align: TooltipAlign) {
       : styleMap.tooltipAlignCenter;
 }
 
-// Opacity matrix per spec sections 6-8:
-//   resting (nothing active):        all bars 100%
-//   hover only:                      hovered 100%, others 20%
-//   playback only:                   playback bar 100%, others 20%
-//   playback + hover (different):    playback 100%, hovered 60%, others 20%
 function getBarOpacity(
   i: number,
   hoveredIndex: number | null,
@@ -207,9 +202,6 @@ export function LapTime({
             </div>
           )}
 
-          {/* Hover tooltip — separate from the playback tooltip; both can
-              be visible at once when playback is running and the user
-              hovers a different bar. */}
           {hoverActive !== null &&
             hoverActive !== playbackIndex &&
             hoverPct !== null && (

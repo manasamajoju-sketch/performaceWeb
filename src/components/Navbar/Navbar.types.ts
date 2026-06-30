@@ -1,6 +1,6 @@
 export interface NavbarProps {
-  /** User initials shown next to avatar, e.g. "PG" */
-  userInitials?: string;
-  /** Called when the user avatar/dropdown is clicked */
+  /** User full name shown in the navbar, e.g. "Pedri Gonzalez" */
+  userFullName?: string;
+  /** Called when the user menu button is clicked */
   onUserMenuClick?: () => void;
 }

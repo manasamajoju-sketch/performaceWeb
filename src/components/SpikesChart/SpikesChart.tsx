@@ -173,6 +173,7 @@ export function SpikesChart({
 
             {/* Chart body — ref here so ResizeObserver gets real px dimensions */}
             <div className={styles.chartArea} ref={areaRef}>
+              <div className={styles.gridOverlay} />
 
               {/* Centre zero line */}
               <div className={styles.centerLine} style={{ top: '50%' }} />

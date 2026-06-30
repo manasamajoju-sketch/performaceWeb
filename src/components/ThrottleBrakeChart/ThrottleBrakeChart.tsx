@@ -136,6 +136,7 @@ export function ThrottleBrakeChart({
             </div>
 
             <div className={styles.chartArea}>
+              <div className={styles.gridOverlay} />
               {/* Avg lines */}
               <div className={styles.avgLine} style={{ bottom: `${avgThrottle}%` }} />
               <div className={styles.avgLine} style={{ bottom: `${avgBrake}%` }} />

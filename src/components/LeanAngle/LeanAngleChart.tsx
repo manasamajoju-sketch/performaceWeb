@@ -128,6 +128,7 @@ export default function LeanAngleChart({
 
         {/* Chart canvas */}
         <div className={styles.chartArea}>
+          <div className={styles.gridOverlay} />
 
           {/* MAX dashed line */}
           <div className={styles.refLineMax} />

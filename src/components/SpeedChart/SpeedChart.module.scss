@@ -150,6 +150,27 @@
   bottom: 0;
 }
 
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 20%
+    );
+}
+
 // ─── Avg / Max reference lines ────────────────────────────────────────────────
 .refLine {
   @include dashed-line;
@@ -185,6 +206,7 @@
   align-items: flex-end;   // all bars grow from bottom
   height: 100%;
   gap: 8px;
+  width: 100%;
   min-width: max-content;
   padding-bottom: 0;
 }

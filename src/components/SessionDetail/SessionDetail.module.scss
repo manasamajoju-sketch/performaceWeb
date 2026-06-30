@@ -161,12 +161,14 @@ cursor: pointer;
   letter-spacing: 0.1em;
   color: $color-text-muted;
   text-transform: uppercase;
+      display: flex;
+    justify-content: flex-start;
 }
 
 .statValue {
   font-size: 26px;
-  font-weight: $font-weight-semi;
-  color: $color-text;
+  font-weight: $font-weight-light;
+  color: $color-text-light;
   letter-spacing: -0.5px;
   line-height: 1;
 }

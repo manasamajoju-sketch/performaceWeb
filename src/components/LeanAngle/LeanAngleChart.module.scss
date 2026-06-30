@@ -125,6 +125,27 @@
   overflow: hidden;
 }
 
+.gridOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 80px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      #ebebeb 0,
+      #ebebeb 1px,
+      transparent 1px,
+      transparent 20%
+    );
+}
+
 // ─── Reference lines ──────────────────────────────────────────────────────────
 .refLineMax {
   position: absolute;

@@ -101,11 +101,22 @@ export default function LandingPage() {
   const [selectedSession, setSelectedSession] = useState<SessionItem | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const handleScroll = useCallback(() => {
-    const el = scrollRef.current
-    if (!el) return
-    setCollapsed(el.scrollTop > 0)
-  }, [])
+const handleScroll = useCallback(() => {
+  const el = scrollRef.current
+  if (!el) return
+  setCollapsed(el.scrollTop > 0)
+}, [])
+
+
+const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+  const el = scrollRef.current
+  if (!el) return
+  const canScroll = el.scrollHeight > el.clientHeight
+  if (!canScroll) {
+    if (e.deltaY > 0) setCollapsed(true)
+    else if (e.deltaY < 0) setCollapsed(false)
+  }
+}, [])
 
   const headerHeight = NAVBAR_H + (collapsed ? CAL_COLLAPSED_H : CAL_EXPANDED_H)
 
@@ -113,7 +124,7 @@ export default function LandingPage() {
   if (selectedSession) {
     return (
       <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Navbar userInitials="PG" />
+        <Navbar userFullName="Pedri Gonzalez" />
         <div style={{ flex: 1, overflow: 'hidden' }}>
           <SessionDetail
             session={{
@@ -153,7 +164,7 @@ export default function LandingPage() {
   return (
     <div className={styles.page}>
       <div className={styles.fixedHeader}>
-        <Navbar userInitials="PG" />
+        <Navbar userFullName="Pedri Gonzalez" />
         <CalendarHeader
           sessionDays={[]}
           summary={{ sessions: 12, duration: '21:21:21', distance: 25.21 }}
@@ -164,22 +175,23 @@ export default function LandingPage() {
         />
       </div>
 
-      <div
-        ref={scrollRef}
-        className={styles.scrollContent}
-        style={{
-          top:    headerHeight,
-          height: `calc(100vh - ${headerHeight}px)`,
-        }}
-        onScroll={handleScroll}
-      >
-        <SessionsPanel
-          sessions={sessions}
-          pods={pods}
-          onSessionClick={setSelectedSession}
-          onSearch={(q) => console.log('Search:', q)}
-        />
-      </div>
+    <div
+  ref={scrollRef}
+  className={styles.scrollContent}
+  style={{
+    top:    headerHeight,
+    height: `calc(100vh - ${headerHeight}px)`,
+  }}
+  onScroll={handleScroll}
+  onWheel={handleWheel}
+>
+  <SessionsPanel
+    sessions={sessions}
+    pods={pods}
+    onSessionClick={setSelectedSession}
+    onSearch={(q) => console.log('Search:', q)}
+  />
+</div>
     </div>
   )
 }
