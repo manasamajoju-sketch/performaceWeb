@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+# PerformanceWeb
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React + TypeScript web application for viewing and analyzing performance/session data with charts, maps, and detailed session views.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project is a frontend dashboard focused on:
+- viewing session details
+- visualizing sensor data such as acceleration, gyroscope, speed, and orientation
+- rendering route and activity maps
+- presenting lap and impact analysis
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- TypeScript
+- Vite
+- SCSS modules
+- Leaflet
+- Three.js
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Install dependencies
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+bash
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Run locally
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+bash
+npm run dev
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Build for production
+
+bash
+npm run build
+
+
+### Lint
+
+bash
+npm run lint
+
+
+## Project Structure
+
+text
+src/
+  components/
+    AccelerometerChart/
+    ActivityMap/
+    Calender/
+    GyroscopeChart/
+    HelmetViewer/
+    ImpactAnalysis/
+    LapAnalysis/
+    LapTimeChart/
+    LeanAngle/
+    Login/
+    Navbar/
+    OrientationStats/
+    Profile/
+    RouteMap/
+    SensorPanel/
+    SessionDetail/
+    SessionPanel/
+    SpeedChart/
+    SpikesChart/
+    ThrottleBrakeChart/
+  assets/
+  styles/
+
+
+## Main Areas
+
+- Components folder: reusable UI and feature components
+- Styles folder: global and shared SCSS styles
+- Public folder: static assets and models
