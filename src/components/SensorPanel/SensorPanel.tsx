@@ -41,7 +41,7 @@ function generateDemoOrientation(count = 200): OrientationFrame[] {
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
-export function SensorPanel({ data, playbackMs }: SensorPanelProps) {
+export function SensorPanel({ data, playbackMs, playing, totalMs }: SensorPanelProps) {
   const [helmetReset, setHelmetReset] = useState(0)
 
   const orientationFrames = useMemo(
@@ -87,11 +87,29 @@ export function SensorPanel({ data, playbackMs }: SensorPanelProps) {
         </button>
       </div>
 
-            <div className={styles.section}><AccelerometerChart /></div>
+            <div className={styles.section}>
+              <AccelerometerChart
+                playbackMs={playbackMs}
+                playing={playing}
+                totalMs={totalMs}
+              />
+            </div>
       <div className={styles.sectionDividerHorizontal} />
-      <div className={styles.section}><GyroscopeChart /></div>
+      <div className={styles.section}>
+        <GyroscopeChart
+          playbackMs={playbackMs}
+          playing={playing}
+          totalMs={totalMs}
+        />
+      </div>
       <div className={styles.sectionDividerHorizontal} />
-      <div className={styles.section}><ImpactAnalysisChart /></div>
+      <div className={styles.section}>
+        <ImpactAnalysisChart
+          playbackMs={playbackMs}
+          playing={playing}
+          totalMs={totalMs}
+        />
+      </div>
 
     </div>
   )

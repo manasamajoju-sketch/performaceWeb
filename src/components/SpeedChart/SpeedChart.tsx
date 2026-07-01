@@ -36,13 +36,23 @@ export function SpeedChart({
   maxLine = 82,
   avgLine = 18,
   unit = 'KM/H',
+  playbackMs = 0,
+  playing = false,
+  totalMs = 0,
 }: SpeedChartProps) {
   const [view, setView] = useState<SpeedView>('avg')
   const [hoveredLap, setHoveredLap] = useState<number | null>(null)
   const [selectedLap, setSelectedLap] = useState<number | null>(null)
 
   const total = lapData.length
-  const activeLap = hoveredLap ?? selectedLap
+  
+  // Calculate playback index
+  const isPlaying = playing || playbackMs > 0;
+  const pbIdx = isPlaying && totalMs > 0
+    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
+    : null;
+  
+  const activeLap = hoveredLap ?? selectedLap ?? pbIdx
 
   const handleLapClick = (i: number) =>
     setSelectedLap(prev => (prev === i ? null : i))
@@ -156,11 +166,26 @@ export function SpeedChart({
 
                   const avgPct = toPercent(lap.avgSpeed)
                   const maxPct = toPercent(lap.maxSpeed)
+                  
+                  // Calculate opacity based on playback and hover state
+                  let opacityValue = 1;
+                  if (hoveredLap !== null || pbIdx !== null) {
+                    if (i === pbIdx && i === hoveredLap) {
+                      opacityValue = 1; // Playback takes priority
+                    } else if (i === pbIdx) {
+                      opacityValue = 1;
+                    } else if (i === hoveredLap) {
+                      opacityValue = pbIdx !== null ? 0.6 : 1;
+                    } else {
+                      opacityValue = 0.2;
+                    }
+                  }
 
                   return (
                     <div
                       key={i}
                       className={`${styles.barCol} ${faded ? styles.barColFaded : ''} ${active ? styles.barColActive : ''}`}
+                      style={{ opacity: opacityValue }}
                       onMouseEnter={() => setHoveredLap(i)}
                       onMouseLeave={() => setHoveredLap(null)}
                       onClick={() => handleLapClick(i)}

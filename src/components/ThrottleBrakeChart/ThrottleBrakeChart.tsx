@@ -54,12 +54,22 @@ export function ThrottleBrakeChart({
   lapData = DEFAULT_LAP_DATA,
   throttlePercent = 60,
   brakePercent = 60,
+  playbackMs = 0,
+  playing = false,
+  totalMs = 0,
 }: ThrottleBrakeChartProps) {
   const [hoveredLap, setHoveredLap] = useState<number | null>(null);
   const [selectedLap, setSelectedLap] = useState<number | null>(null);
 
   const total = lapData.length;
-  const activeLap = hoveredLap ?? selectedLap;
+  
+  // Calculate playback index
+  const isPlaying = playing || playbackMs > 0;
+  const pbIdx = isPlaying && totalMs > 0
+    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
+    : null;
+  
+  const activeLap = hoveredLap ?? selectedLap ?? pbIdx;
 
   const handleBarClick = (i: number) =>
     setSelectedLap((prev) => (prev === i ? null : i));
@@ -146,10 +156,26 @@ export function ThrottleBrakeChart({
                   {lapData.map((lap, i) => {
                     const faded = activeLap !== null && activeLap !== i;
                     const active = activeLap === i;
+                    
+                    // Calculate opacity based on playback and hover state
+                    let opacityValue = 1;
+                    if (hoveredLap !== null || pbIdx !== null) {
+                      if (i === pbIdx && i === hoveredLap) {
+                        opacityValue = 1; // Playback takes priority
+                      } else if (i === pbIdx) {
+                        opacityValue = 1;
+                      } else if (i === hoveredLap) {
+                        opacityValue = pbIdx !== null ? 0.6 : 1;
+                      } else {
+                        opacityValue = 0.2;
+                      }
+                    }
+                    
                     return (
                       <div
                         key={i}
                         className={`${styles.barGroup} ${faded ? styles.barGroupFaded : ""} ${active ? styles.barGroupActive : ""}`}
+                        style={{ opacity: opacityValue }}
                         onMouseEnter={() => setHoveredLap(i)}
                         onMouseLeave={() => setHoveredLap(null)}
                         onClick={() => handleBarClick(i)}

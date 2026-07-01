@@ -269,6 +269,9 @@ export function SessionDetail({ session, onBack }: SessionDetailProps) {
                   lapData={session.lapData}
                   throttlePercent={session.throttlePercent ?? 60}
                   brakePercent={session.brakePercent ?? 60}
+                  playbackMs={playbackMs}
+                  playing={playing}
+                  totalMs={totalMs}
                 />
               </div>
 
@@ -282,6 +285,9 @@ export function SessionDetail({ session, onBack }: SessionDetailProps) {
                   brakeMax={100}
                   throttleSpikes={session.throttleSpikes ?? "5:30"}
                   brakeSpikes={session.brakeSpikes ?? "5:30"}
+                  playbackMs={playbackMs}
+                  playing={playing}
+                  totalMs={totalMs}
                 />
               </div>
 
@@ -296,8 +302,9 @@ export function SessionDetail({ session, onBack }: SessionDetailProps) {
                   maxValue={session.lapTimeMax ?? "9:30"}
                   data={session.lapData?.map((lap) => ({
                     value: Math.round((lap.brake + lap.throttle) / 2),
-                  }))}
-                />
+                  }))}                  playbackMs={playbackMs}
+                  playing={playing}
+                  totalMs={totalMs}                />
               </div>
 
               <div className={styles.sectionDividerHorizontal} />
@@ -306,8 +313,9 @@ export function SessionDetail({ session, onBack }: SessionDetailProps) {
               <div className={styles.section}>
                 <SpeedChart
                   avgSpeed={session.avgSpeedKmh ?? 55}
-                  maxSpeed={session.maxSpeedChart ?? 120}
-                />
+                  maxSpeed={session.maxSpeedChart ?? 120}                  playbackMs={playbackMs}
+                  playing={playing}
+                  totalMs={totalMs}                />
               </div>
 
               <div className={styles.sectionDividerHorizontal} />

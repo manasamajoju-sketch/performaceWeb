@@ -76,6 +76,9 @@ export function LapTime({
   refLines = DEFAULT_REF_LINES,
   xAxisLabels,
   playbackIndex = null,
+  playbackMs = 0,
+  playing = false,
+  totalMs = 0,
 }: LapTimeProps) {
   // Hover/click are local UI state. playbackIndex is controlled externally —
   // neither one ever touches avgValue/maxValue: the header is a session
@@ -84,6 +87,16 @@ export function LapTime({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const total = data.length;
+  
+  // Calculate playback index from playbackMs if playbackMs is provided
+  let calculatedPlaybackIndex = playbackIndex;
+  if (playbackMs > 0 || playing) {
+    const isPlaying = playing || playbackMs > 0;
+    calculatedPlaybackIndex = isPlaying && totalMs > 0
+      ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
+      : null;
+  }
+  
   const hoverActive = hoveredIndex ?? selectedIndex;
 
   const handleBarClick = (i: number) =>
@@ -94,7 +107,7 @@ export function LapTime({
   const hoverPct =
     hoverActive !== null ? ((hoverActive + 0.5) / total) * 100 : null;
   const playbackPct =
-    playbackIndex != null ? ((playbackIndex + 0.5) / total) * 100 : null;
+    calculatedPlaybackIndex != null ? ((calculatedPlaybackIndex + 0.5) / total) * 100 : null;
 
   return (
     <div className={styles.card}>
@@ -168,7 +181,7 @@ export function LapTime({
                     className={styles.bar}
                     style={{
                       height: `${point.value}%`,
-                      opacity: getBarOpacity(i, hoverActive, playbackIndex),
+                      opacity: getBarOpacity(i, hoverActive, calculatedPlaybackIndex),
                     }}
                   />
                 </div>
@@ -187,23 +200,23 @@ export function LapTime({
 
           {/* Playback tooltip — visible whenever playback is running,
               regardless of hover. */}
-          {playbackIndex != null && playbackPct !== null && (
+          {calculatedPlaybackIndex != null && playbackPct !== null && (
             <div
               className={`${styles.tooltip} ${alignClass(styles, getTooltipAlign(playbackPct))}`}
               style={{
                 left: `${playbackPct}%`,
-                bottom: `calc(${data[playbackIndex].value}% + ${TOOLTIP_BAR_GAP}px)`,
+                bottom: `calc(${data[calculatedPlaybackIndex].value}% + ${TOOLTIP_BAR_GAP}px)`,
               }}
             >
-              <div className={styles.tooltipTitle}>Lap {playbackIndex + 1}</div>
+              <div className={styles.tooltipTitle}>Lap {calculatedPlaybackIndex + 1}</div>
               <div className={styles.tooltipValue}>
-                {data[playbackIndex].timeLabel ?? `${data[playbackIndex].value}%`}
+                {data[calculatedPlaybackIndex].timeLabel ?? `${data[calculatedPlaybackIndex].value}%`}
               </div>
             </div>
           )}
 
           {hoverActive !== null &&
-            hoverActive !== playbackIndex &&
+            hoverActive !== calculatedPlaybackIndex &&
             hoverPct !== null && (
               <div
                 className={`${styles.tooltip} ${alignClass(styles, getTooltipAlign(hoverPct))}`}

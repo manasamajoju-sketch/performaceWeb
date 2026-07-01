@@ -32,5 +32,8 @@ export interface LapTimeProps {
   yAxisLabels?: LapTimeYAxisLabel[];
   refLines?: LapTimeRefLine[];
   xAxisLabels?: string[];
-    playbackIndex?: number | null;
+  playbackIndex?: number | null;
+  playbackMs?: number;
+  playing?: boolean;
+  totalMs?: number;
 }

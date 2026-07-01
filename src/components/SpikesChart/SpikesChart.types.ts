@@ -9,4 +9,7 @@ export interface SpikesChartProps {
   brakeMax?: number
   throttleSpikes?: string | number
   brakeSpikes?: string | number
+  playbackMs?: number
+  playing?: boolean
+  totalMs?: number
 }

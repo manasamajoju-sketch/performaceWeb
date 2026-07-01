@@ -26,6 +26,9 @@ export function GyroscopeChart({
   avgLine = 0,
   rightTopLabel = '09:30',
   rightBottomLabel = '05:30',
+  playbackMs = 0,
+  playing = false,
+  totalMs = 0,
 }: GyroscopeChartProps) {
   const [hovered, setHovered] = useState<number | null>(null)
   const [dims, setDims] = useState({ width: 0, height: 0 })
@@ -45,6 +48,12 @@ export function GyroscopeChart({
 
   const total = data.length
   const range = yMax - yMin
+  
+  // Calculate playback index
+  const isPlaying = playing || playbackMs > 0;
+  const pbIdx = isPlaying && totalMs > 0
+    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
+    : null;
 
   const xFor = (i: number) => (dims.width > 0 ? (i / (total - 1)) * dims.width : 0)
   const yFor = (val: number) =>
@@ -116,6 +125,16 @@ export function GyroscopeChart({
                 <line
                   x1={xFor(hovered)} y1={0} x2={xFor(hovered)} y2={dims.height}
                   className={styles.hoverLine}
+                />
+              )}
+              
+              {/* Playback cursor line */}
+              {pbIdx !== null && (
+                <line
+                  x1={xFor(pbIdx)} y1={0} x2={xFor(pbIdx)} y2={dims.height}
+                  className={styles.playbackLine}
+                  strokeWidth={2}
+                  stroke="rgba(100, 200, 255, 0.8)"
                 />
               )}
 

@@ -12,4 +12,7 @@ export interface ThrottleBrakeChartProps {
   throttleSpikes?: any
   brakeSpikes?: any
   playbackDuration?: string | number
+  playbackMs?: number
+  playing?: boolean
+  totalMs?: number
 }

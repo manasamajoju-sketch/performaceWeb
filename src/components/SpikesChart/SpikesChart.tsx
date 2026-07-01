@@ -54,6 +54,9 @@ export function SpikesChart({
   brakeMax = 100,
   throttleSpikes = '5:30',
   brakeSpikes = '5:30',
+  playbackMs = 0,
+  playing = false,
+  totalMs = 0,
 }: SpikesChartProps) {
   const [hoveredLap, setHoveredLap] = useState<number | null>(null)
   const [selectedLap, setSelectedLap] = useState<number | null>(null)
@@ -75,7 +78,14 @@ export function SpikesChart({
   }, [])
 
   const total = lapData.length
-  const activeLap = hoveredLap ?? selectedLap
+  
+  // Calculate playback index
+  const isPlaying = playing || playbackMs > 0;
+  const pbIdx = isPlaying && totalMs > 0
+    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
+    : null;
+  
+  const activeLap = hoveredLap ?? selectedLap ?? pbIdx
 
   const halfH = dims.height / 2
 
@@ -204,9 +214,23 @@ export function SpikesChart({
                     const by = yBrake(lap.brake)
                     const faded = activeLap !== null && activeLap !== i
                     const active = activeLap === i
+                    
+                    // Calculate opacity based on playback and hover state
+                    let opacityValue = 1;
+                    if (hoveredLap !== null || pbIdx !== null) {
+                      if (i === pbIdx && i === hoveredLap) {
+                        opacityValue = 1; // Playback takes priority
+                      } else if (i === pbIdx) {
+                        opacityValue = 1;
+                      } else if (i === hoveredLap) {
+                        opacityValue = pbIdx !== null ? 0.6 : 1;
+                      } else {
+                        opacityValue = 1;
+                      }
+                    }
 
                     return (
-                      <g key={i}>
+                      <g key={i} opacity={opacityValue}>
                         {/* Connector line joining throttle dot to brake dot when active */}
                         {active && (
                           <line

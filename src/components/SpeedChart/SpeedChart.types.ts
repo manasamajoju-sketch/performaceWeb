@@ -19,4 +19,7 @@ export interface SpeedChartProps {
   avgLine?: number
   /** Unit label (default 'KM/H') */
   unit?: string
+  playbackMs?: number
+  playing?: boolean
+  totalMs?: number
 }

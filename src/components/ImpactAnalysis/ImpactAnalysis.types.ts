@@ -19,4 +19,7 @@ export interface ImpactAnalysisChartProps {
   avgLine?: number
   rightTopLabel?: string
   rightBottomLabel?: string
+  playbackMs?: number
+  playing?: boolean
+  totalMs?: number
 }
