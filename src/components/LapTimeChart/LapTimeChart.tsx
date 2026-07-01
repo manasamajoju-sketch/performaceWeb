@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useChartInteraction } from "../chart-utils";
 import styles from "./LapTimeChart.module.scss";
 import type {
   LapTimeProps,
@@ -37,35 +37,6 @@ const TOOLTIP_EDGE_THRESHOLD = 15;
 // How far (px) a tooltip floats above the top of its active bar.
 const TOOLTIP_BAR_GAP = 5;
 
-type TooltipAlign = "left" | "center" | "right";
-
-function getTooltipAlign(pct: number): TooltipAlign {
-  if (pct <= TOOLTIP_EDGE_THRESHOLD) return "left";
-  if (pct >= 100 - TOOLTIP_EDGE_THRESHOLD) return "right";
-  return "center";
-}
-
-function alignClass(styleMap: Record<string, string>, align: TooltipAlign) {
-  return align === "left"
-    ? styleMap.tooltipAlignLeft
-    : align === "right"
-      ? styleMap.tooltipAlignRight
-      : styleMap.tooltipAlignCenter;
-}
-
-function getBarOpacity(
-  i: number,
-  hoveredIndex: number | null,
-  playbackIndex: number | null | undefined,
-): number {
-  const isPlayback = playbackIndex != null && playbackIndex === i;
-  const isHovered = hoveredIndex === i;
-  if (isPlayback) return 1;
-  if (isHovered) return playbackIndex != null ? 0.6 : 1;
-  if (hoveredIndex !== null || playbackIndex != null) return 0.2;
-  return 1;
-}
-
 export function LapTime({
   label = "Lap Time",
   sublabel = "MM:SS",
@@ -83,20 +54,25 @@ export function LapTime({
   // Hover/click are local UI state. playbackIndex is controlled externally —
   // neither one ever touches avgValue/maxValue: the header is a session
   // summary and must not change on hover or during playback (Core Rule).
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
   const total = data.length;
-  
-  // Calculate playback index from playbackMs if playbackMs is provided
-  let calculatedPlaybackIndex = playbackIndex;
-  if (playbackMs > 0 || playing) {
-    const isPlaying = playing || playbackMs > 0;
-    calculatedPlaybackIndex = isPlaying && totalMs > 0
-      ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
-      : null;
-  }
-  
+  const {
+    hoveredIndex,
+    selectedIndex,
+    setHoveredIndex,
+    setSelectedIndex,
+    playbackIndex: calculatedPlaybackIndex,
+    tooltipAlign,
+    getOpacity,
+  } = useChartInteraction({
+    total,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: TOOLTIP_EDGE_THRESHOLD,
+    allowCenterAlign: false,
+    playbackIndexOverride: playbackIndex,
+  });
+
   const hoverActive = hoveredIndex ?? selectedIndex;
 
   const handleBarClick = (i: number) =>
@@ -181,7 +157,7 @@ export function LapTime({
                     className={styles.bar}
                     style={{
                       height: `${point.value}%`,
-                      opacity: getBarOpacity(i, hoverActive, calculatedPlaybackIndex),
+                      opacity: getOpacity(i),
                     }}
                   />
                 </div>
@@ -202,7 +178,7 @@ export function LapTime({
               regardless of hover. */}
           {calculatedPlaybackIndex != null && playbackPct !== null && (
             <div
-              className={`${styles.tooltip} ${alignClass(styles, getTooltipAlign(playbackPct))}`}
+              className={`${styles.tooltip} ${styles.tooltipAlignCenter}`} // playback tooltip is centered by default
               style={{
                 left: `${playbackPct}%`,
                 bottom: `calc(${data[calculatedPlaybackIndex].value}% + ${TOOLTIP_BAR_GAP}px)`,
@@ -219,7 +195,7 @@ export function LapTime({
             hoverActive !== calculatedPlaybackIndex &&
             hoverPct !== null && (
               <div
-                className={`${styles.tooltip} ${alignClass(styles, getTooltipAlign(hoverPct))}`}
+                className={`${styles.tooltip} ${tooltipAlign === 'left' ? styles.tooltipAlignLeft : tooltipAlign === 'right' ? styles.tooltipAlignRight : styles.tooltipAlignCenter}`}
                 style={{
                   left: `${hoverPct}%`,
                   bottom: `calc(${data[hoverActive].value}% + ${TOOLTIP_BAR_GAP}px)`,

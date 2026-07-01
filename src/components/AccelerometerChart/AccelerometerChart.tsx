@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import styles from './AccelerometerChart.module.scss'
 import type { AccelerometerChartProps, AxisDataPoint } from './AccelerometerChart.types'
+import { useChartInteraction } from '../chart-utils'
 
 const DEFAULT_DATA: AxisDataPoint[] = Array.from({ length: 48 }, (_, i) => {
   const phase = i / 48
@@ -13,7 +13,6 @@ const DEFAULT_DATA: AxisDataPoint[] = Array.from({ length: 48 }, (_, i) => {
 
 const TOOLTIP_EDGE_THRESHOLD = 15
 const SEGMENT_GAP_PCT = 2.5 // visual gap between the cyan base and the colored cap, in % of chart height
-type TooltipAlign = 'left' | 'right'
 
 function capAxis(p: AxisDataPoint): 'y' | 'z' {
   return p.y >= p.z ? 'y' : 'z'
@@ -37,28 +36,25 @@ export function AccelerometerChart({
   playing = false,
   totalMs = 0,
 }: AccelerometerChartProps) {
-  const [hovered, setHovered] = useState<number | null>(null)
-  const [selected, setSelected] = useState<number | null>(null)
-  
-  const total = data.length
-  
-  // Calculate playback index
-  const isPlaying = playing || playbackMs > 0;
-  const pbIdx = isPlaying && totalMs > 0
-    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
-    : null;
-  
-  const active = hovered ?? selected ?? pbIdx
-  const toPercent = (v: number) => Math.min(100, (v / yMax) * 100)
-
-  const activePct = active !== null ? ((active + 0.5) / total) * 100 : null
-  let tooltipAlign: TooltipAlign = 'right'
-  if (activePct !== null) {
-    if (activePct <= TOOLTIP_EDGE_THRESHOLD) tooltipAlign = 'left'
-    else if (activePct >= 100 - TOOLTIP_EDGE_THRESHOLD) tooltipAlign = 'right'
-  }
+  const {
+    setHoveredIndex,
+    setSelectedIndex,
+    activeIndex,
+    activePct,
+    tooltipAlign,
+    getOpacity,
+  } = useChartInteraction({
+    total: data.length,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: TOOLTIP_EDGE_THRESHOLD,
+    allowCenterAlign: false,
+  })
+  const active = activeIndex
   const tooltipAlignClass =
     tooltipAlign === 'left' ? styles.tooltipAlignLeft : styles.tooltipAlignRight
+  const toPercent = (v: number) => Math.min(100, (v / yMax) * 100)
 
   const barColorClass = (axis: 'x' | 'y' | 'z') =>
     axis === 'x' ? styles.barCyan : axis === 'y' ? styles.barGreen : styles.barPurple
@@ -126,29 +122,15 @@ export function AccelerometerChart({
               const hasCap = capVal > baseValue
               const capBottomPct = basePct + SEGMENT_GAP_PCT
               const capHeightPct = Math.max(0, totalPct - capBottomPct)
-              
-              // Calculate opacity based on playback and hover state
-              let opacityValue = 1;
-              if (hovered !== null || pbIdx !== null) {
-                if (i === pbIdx && i === hovered) {
-                  opacityValue = 1; // Playback takes priority
-                } else if (i === pbIdx) {
-                  opacityValue = 1;
-                } else if (i === hovered) {
-                  opacityValue = pbIdx !== null ? 0.6 : 1;
-                } else {
-                  opacityValue = 0.2;
-                }
-              }
 
               return (
                 <div
                   key={i}
                   className={styles.barWrap}
-                  style={{ opacity: opacityValue }}
-                  onMouseEnter={() => setHovered(i)}
-                  onMouseLeave={() => setHovered(null)}
-                  onClick={() => setSelected((prev) => (prev === i ? null : i))}
+                  style={{ opacity: getOpacity(i) }}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  onClick={() => setSelectedIndex((prev) => (prev === i ? null : i))}
                 >
                   <div
                     className={`${styles.bar} ${styles.barBase} ${barColorClass('x')} ${faded ? styles.barFaded : ''}`}

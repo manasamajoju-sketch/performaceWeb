@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useChartInteraction } from '../chart-utils'
 import styles from './SpeedChart.module.scss'
 import type { SpeedChartProps, SpeedLapData } from './SpeedChart.types'
 
@@ -24,8 +25,6 @@ const DEFAULT_LAP_DATA: SpeedLapData[] = [
 // Vertical gap, in px, carved out between the avg (bottom) and max (top) bar segments.
 const BAR_SEGMENT_GAP = 4
 const TOOLTIP_EDGE_THRESHOLD = 15;
-
-type TooltipAlign = "left" | "right";
 type SpeedView = 'avg' | 'max'
 
 export function SpeedChart({
@@ -41,21 +40,24 @@ export function SpeedChart({
   totalMs = 0,
 }: SpeedChartProps) {
   const [view, setView] = useState<SpeedView>('avg')
-  const [hoveredLap, setHoveredLap] = useState<number | null>(null)
-  const [selectedLap, setSelectedLap] = useState<number | null>(null)
-
   const total = lapData.length
-  
-  // Calculate playback index
-  const isPlaying = playing || playbackMs > 0;
-  const pbIdx = isPlaying && totalMs > 0
-    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
-    : null;
-  
-  const activeLap = hoveredLap ?? selectedLap ?? pbIdx
+  const {
+    setHoveredIndex,
+    setSelectedIndex,
+    activeIndex,
+    tooltipAlign,
+    getOpacity,
+  } = useChartInteraction({
+    total,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: TOOLTIP_EDGE_THRESHOLD,
+    allowCenterAlign: false,
+  })
 
   const handleLapClick = (i: number) =>
-    setSelectedLap(prev => (prev === i ? null : i))
+    setSelectedIndex(prev => (prev === i ? null : i))
 
   const toPercent = (val: number) => Math.min(100, (val / yMax) * 100)
 
@@ -71,24 +73,13 @@ export function SpeedChart({
     { text: 'AVG',  avg: true  },
     { text: '0 KM/H',    avg: false },
   ]
-   const activeLapPct =
-    activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null;
 
-  let tooltipAlign: TooltipAlign = "right";
-  if (activeLapPct !== null) {
-    if (activeLapPct <= TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = "left";
-    } else if (activeLapPct >= 100 - TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = "right";
-    }
-  }
+  const activeLap = activeIndex;
 
   const tooltipAlignClass =
     tooltipAlign === "left"
       ? styles.tooltipAlignLeft
-      : tooltipAlign === "right"
-        ? styles.tooltipAlignRight
-        : styles.tooltipAlignRight; 
+      : styles.tooltipAlignRight;
   return (
     <div className={styles.card}>
 
@@ -166,28 +157,15 @@ export function SpeedChart({
 
                   const avgPct = toPercent(lap.avgSpeed)
                   const maxPct = toPercent(lap.maxSpeed)
-                  
-                  // Calculate opacity based on playback and hover state
-                  let opacityValue = 1;
-                  if (hoveredLap !== null || pbIdx !== null) {
-                    if (i === pbIdx && i === hoveredLap) {
-                      opacityValue = 1; // Playback takes priority
-                    } else if (i === pbIdx) {
-                      opacityValue = 1;
-                    } else if (i === hoveredLap) {
-                      opacityValue = pbIdx !== null ? 0.6 : 1;
-                    } else {
-                      opacityValue = 0.2;
-                    }
-                  }
+                  const opacity = getOpacity(i)
 
                   return (
                     <div
                       key={i}
                       className={`${styles.barCol} ${faded ? styles.barColFaded : ''} ${active ? styles.barColActive : ''}`}
-                      style={{ opacity: opacityValue }}
-                      onMouseEnter={() => setHoveredLap(i)}
-                      onMouseLeave={() => setHoveredLap(null)}
+                      style={{ opacity }}
+                      onMouseEnter={() => setHoveredIndex(i)}
+                      onMouseLeave={() => setHoveredIndex(null)}
                       onClick={() => handleLapClick(i)}
                     >
                       {/* Dark teal avg bar (bottom segment, anchored to baseline) */}

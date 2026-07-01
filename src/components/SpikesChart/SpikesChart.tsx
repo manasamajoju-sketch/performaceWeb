@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useChartInteraction } from '../chart-utils'
 import styles from './SpikesChart.module.scss'
 import type { SpikesChartProps, LapData } from './SpikesChart.types'
 
@@ -17,8 +18,6 @@ const DEFAULT_LAP_DATA: LapData[] = [
 const DOT_RADIUS = 4
 const DOT_RADIUS_ACTIVE = 8
 const TOOLTIP_EDGE_THRESHOLD = 15
-
-type TooltipAlign = 'left' | 'right'
 
 interface StatPanelProps {
   label: string
@@ -58,10 +57,24 @@ export function SpikesChart({
   playing = false,
   totalMs = 0,
 }: SpikesChartProps) {
-  const [hoveredLap, setHoveredLap] = useState<number | null>(null)
-  const [selectedLap, setSelectedLap] = useState<number | null>(null)
   const [dims, setDims] = useState({ width: 0, height: 0 })
   const areaRef = useRef<HTMLDivElement>(null)
+  const total = lapData.length
+  const {
+    setHoveredIndex,
+    setSelectedIndex,
+    activeIndex,
+    activePct,
+    tooltipAlign,
+    getOpacity,
+  } = useChartInteraction({
+    total,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: TOOLTIP_EDGE_THRESHOLD,
+    allowCenterAlign: false,
+  })
 
   useEffect(() => {
     const el = areaRef.current
@@ -76,16 +89,6 @@ export function SpikesChart({
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
-
-  const total = lapData.length
-  
-  // Calculate playback index
-  const isPlaying = playing || playbackMs > 0;
-  const pbIdx = isPlaying && totalMs > 0
-    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
-    : null;
-  
-  const activeLap = hoveredLap ?? selectedLap ?? pbIdx
 
   const halfH = dims.height / 2
 
@@ -112,8 +115,9 @@ export function SpikesChart({
   const throttleAvgY = yThrottle(avgThrottle)
   const brakeAvgY = yBrake(avgBrake)
 
+  const activeLap = activeIndex
   const handleClick = (i: number) =>
-    setSelectedLap((prev) => (prev === i ? null : i))
+    setSelectedIndex((prev) => (prev === i ? null : i))
 
   const yLabels = [
     { text: `${throttleMax}` },
@@ -126,18 +130,7 @@ export function SpikesChart({
     const lap = Math.max(1, Math.round(((index / 10) * (total - 1)) + 1));
     return { key: `x-label-${index}`, label: `Lap ${lap}` };
   });
-  const activeLapPct =
-    activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null
-
-  let tooltipAlign: TooltipAlign = 'right'
-  if (activeLapPct !== null) {
-    if (activeLapPct <= TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = 'left'
-    } else if (activeLapPct >= 100 - TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = 'right'
-    }
-  }
-
+  const activeLapPct = activePct
   const tooltipAlignClass =
     tooltipAlign === 'left' ? styles.tooltipAlignLeft : styles.tooltipAlignRight
 
@@ -212,25 +205,11 @@ export function SpikesChart({
                     const x = xFor(i)
                     const ty = yThrottle(lap.throttle)
                     const by = yBrake(lap.brake)
-                    const faded = activeLap !== null && activeLap !== i
-                    const active = activeLap === i
-                    
-                    // Calculate opacity based on playback and hover state
-                    let opacityValue = 1;
-                    if (hoveredLap !== null || pbIdx !== null) {
-                      if (i === pbIdx && i === hoveredLap) {
-                        opacityValue = 1; // Playback takes priority
-                      } else if (i === pbIdx) {
-                        opacityValue = 1;
-                      } else if (i === hoveredLap) {
-                        opacityValue = pbIdx !== null ? 0.6 : 1;
-                      } else {
-                        opacityValue = 1;
-                      }
-                    }
+                    const faded = activeIndex !== null && activeIndex !== i
+                    const active = activeIndex === i
 
                     return (
-                      <g key={i} opacity={opacityValue}>
+                      <g key={i} opacity={getOpacity(i)}>
                         {/* Connector line joining throttle dot to brake dot when active */}
                         {active && (
                           <line
@@ -252,8 +231,8 @@ export function SpikesChart({
                             ${faded ? styles.dotFaded : ''}
                             ${active ? styles.dotActive : ''}
                           `}
-                          onMouseEnter={() => setHoveredLap(i)}
-                          onMouseLeave={() => setHoveredLap(null)}
+                          onMouseEnter={() => setHoveredIndex(i)}
+                          onMouseLeave={() => setHoveredIndex(null)}
                           onClick={() => handleClick(i)}
                         />
                         {/* Brake dot — dark, lower half */}
@@ -266,8 +245,8 @@ export function SpikesChart({
                             ${faded ? styles.dotFaded : ''}
                             ${active ? styles.dotActiveAlt : ''}
                           `}
-                          onMouseEnter={() => setHoveredLap(i)}
-                          onMouseLeave={() => setHoveredLap(null)}
+                          onMouseEnter={() => setHoveredIndex(i)}
+                          onMouseLeave={() => setHoveredIndex(null)}
                           onClick={() => handleClick(i)}
                         />
                       </g>

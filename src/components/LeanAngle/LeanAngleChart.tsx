@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useChartInteraction } from '../chart-utils'
 import styles from './LeanAngleChart.module.scss'
 import type { LeanAngleChartProps, LeanAngleDataPoint } from './LeanAngleChart.types'
 
@@ -38,33 +38,24 @@ export default function LeanAngleChart({
   totalMs     = 72000,
 }: LeanAngleChartProps) {
   const pts = data ?? generateMockData(BAR_COUNT)
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null)
+  const {
+    hoveredIndex,
+    setHoveredIndex,
+    playbackIndex,
+    getOpacity,
+  } = useChartInteraction({
+    total: BAR_COUNT,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: EDGE,
+    allowCenterAlign: false,
+  })
 
-  // ── Playback ────────────────────────────────────────────────────────────
-  const isPlaying = playing || playbackMs > 0
-  const pbIdx = isPlaying && totalMs > 0
-    ? Math.min(Math.round((playbackMs / totalMs) * (BAR_COUNT - 1)), BAR_COUNT - 1)
-    : null
-  const pbPct = pbIdx !== null ? ((pbIdx + 0.5) / BAR_COUNT) * 100 : null
-
-  // ── Opacity — states 6 / 7 / 8 from spec ────────────────────────────────
-  function opacity(i: number): number {
-    const hov = hoveredIdx !== null
-    const pb  = isPlaying && pbIdx !== null
-    if (hov && pb) {
-      if (i === pbIdx)      return 1.0
-      if (i === hoveredIdx) return 0.6
-      return 0.2
-    }
-    if (pb)  return i === pbIdx      ? 1.0 : 0.2
-    if (hov) return i === hoveredIdx ? 1.0 : 0.2
-    return 1.0
-  }
-
-  // ── Tooltip ──────────────────────────────────────────────────────────────
-  const hovPt  = hoveredIdx !== null ? pts[hoveredIdx] : null
-  const hovPct = hoveredIdx !== null ? ((hoveredIdx + 0.5) / BAR_COUNT) * 100 : null
-  const pbPt   = (isPlaying && pbIdx !== null) ? pts[pbIdx] : null
+  const hovPt  = hoveredIndex !== null ? pts[hoveredIndex] : null
+  const hovPct = hoveredIndex !== null ? ((hoveredIndex + 0.5) / BAR_COUNT) * 100 : null
+  const pbPt   = playbackIndex !== null ? pts[playbackIndex] : null
+  const pbPct  = playbackIndex !== null ? ((playbackIndex + 0.5) / BAR_COUNT) * 100 : null
 
   const alignClass = (a: Align) =>
     a === 'left'  ? styles.tooltipAlignLeft
@@ -138,7 +129,7 @@ export default function LeanAngleChart({
 
           {/* Bars — absolutely positioned by pixel, chartArea clips overflow */}
           {pts.map((pt, i) => {
-            const op    = opacity(i)
+            const op    = getOpacity(i)
             // left lean height = % of the top half (50% of chartArea)
             // e.g. 100% lean → fills the entire top half
             const leftH  = `${pt.left / 2}%`
@@ -151,8 +142,8 @@ export default function LeanAngleChart({
                 key={i}
                 className={styles.barCol}
                 style={{ left: leftPx }}
-                onMouseEnter={() => setHoveredIdx(i)}
-                onMouseLeave={() => setHoveredIdx(null)}
+                onMouseEnter={() => setHoveredIndex(i)}
+                onMouseLeave={() => setHoveredIndex(null)}
               >
                 <div
                   className={styles.leftBar}
@@ -167,7 +158,7 @@ export default function LeanAngleChart({
           })}
 
           {/* Playback cursor */}
-          {isPlaying && pbPct !== null && (
+          {playbackIndex !== null && pbPct !== null && (
             <div
               className={styles.playbackCursor}
               style={{ left: `${pbPct}%` }}
@@ -175,12 +166,12 @@ export default function LeanAngleChart({
           )}
 
           {/* Hover tooltip */}
-          {hovPt && hovPct !== null && (
+          {hoveredIndex !== null && hovPt && hovPct !== null && (
             <div
               className={`${styles.tooltip} ${alignClass(getAlign(hovPct))}`}
               style={{ left: `${hovPct}%` }}
             >
-              <div className={styles.tooltipTitle}>Bar {hoveredIdx! + 1}</div>
+              <div className={styles.tooltipTitle}>Bar {hoveredIndex + 1}</div>
               <div className={styles.tooltipRow}>
                 <span className={styles.tooltipLeft}>LEFT</span>
                 <span className={styles.tooltipLeft}>{hovPt.left.toFixed(0)}%</span>
@@ -193,7 +184,7 @@ export default function LeanAngleChart({
           )}
 
           {/* Playback tooltip — only when not hovering */}
-          {isPlaying && pbPt && pbPct !== null && hoveredIdx === null && (
+          {playbackIndex !== null && pbPt && pbPct !== null && hoveredIndex === null && (
             <div
               className={`${styles.tooltip} ${styles.tooltipPlayback} ${alignClass(getAlign(pbPct))}`}
               style={{ left: `${pbPct}%` }}

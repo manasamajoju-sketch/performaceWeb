@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useChartInteraction } from "../chart-utils";
 import styles from "./ThrottleBrakeChart.module.scss";
 import type {
   ThrottleBrakeChartProps,
@@ -20,8 +20,6 @@ const DEFAULT_LAP_DATA: LapData[] = [
 const BAR_SEGMENT_GAP = 4;
 
 const TOOLTIP_EDGE_THRESHOLD = 15;
-
-type TooltipAlign = "left" | "right";
 
 interface StatPanelProps {
   label: string;
@@ -58,21 +56,27 @@ export function ThrottleBrakeChart({
   playing = false,
   totalMs = 0,
 }: ThrottleBrakeChartProps) {
-  const [hoveredLap, setHoveredLap] = useState<number | null>(null);
-  const [selectedLap, setSelectedLap] = useState<number | null>(null);
-
   const total = lapData.length;
-  
-  // Calculate playback index
-  const isPlaying = playing || playbackMs > 0;
-  const pbIdx = isPlaying && totalMs > 0
-    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
-    : null;
-  
-  const activeLap = hoveredLap ?? selectedLap ?? pbIdx;
+  const {
+    setHoveredIndex,
+    setSelectedIndex,
+    activeIndex,
+    activePct,
+    tooltipAlign,
+    getOpacity,
+  } = useChartInteraction({
+    total,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: TOOLTIP_EDGE_THRESHOLD,
+    allowCenterAlign: false,
+  });
+
+  const activeLap = activeIndex;
 
   const handleBarClick = (i: number) =>
-    setSelectedLap((prev) => (prev === i ? null : i));
+    setSelectedIndex((prev) => (prev === i ? null : i));
 
   const avgThrottle = Math.round(
     lapData.reduce((s, l) => s + l.throttle, 0) / lapData.length,
@@ -97,17 +101,7 @@ export function ThrottleBrakeChart({
     return { key: `x-label-${index}`, label: `Lap ${lap}` };
   });
 
-  const activeLapPct =
-    activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null;
-
-  let tooltipAlign: TooltipAlign = "right";
-  if (activeLapPct !== null) {
-    if (activeLapPct <= TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = "left";
-    } else if (activeLapPct >= 100 - TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = "right";
-    }
-  }
+  const activeLapPct = activePct;
 
   const tooltipAlignClass =
     tooltipAlign === "left" ? styles.tooltipAlignLeft : styles.tooltipAlignRight;
@@ -156,28 +150,14 @@ export function ThrottleBrakeChart({
                   {lapData.map((lap, i) => {
                     const faded = activeLap !== null && activeLap !== i;
                     const active = activeLap === i;
-                    
-                    // Calculate opacity based on playback and hover state
-                    let opacityValue = 1;
-                    if (hoveredLap !== null || pbIdx !== null) {
-                      if (i === pbIdx && i === hoveredLap) {
-                        opacityValue = 1; // Playback takes priority
-                      } else if (i === pbIdx) {
-                        opacityValue = 1;
-                      } else if (i === hoveredLap) {
-                        opacityValue = pbIdx !== null ? 0.6 : 1;
-                      } else {
-                        opacityValue = 0.2;
-                      }
-                    }
-                    
+
                     return (
                       <div
                         key={i}
                         className={`${styles.barGroup} ${faded ? styles.barGroupFaded : ""} ${active ? styles.barGroupActive : ""}`}
-                        style={{ opacity: opacityValue }}
-                        onMouseEnter={() => setHoveredLap(i)}
-                        onMouseLeave={() => setHoveredLap(null)}
+                        style={{ opacity: getOpacity(i) }}
+                        onMouseEnter={() => setHoveredIndex(i)}
+                        onMouseLeave={() => setHoveredIndex(null)}
                         onClick={() => handleBarClick(i)}
                       >
                         <div className={styles.barWrapper}>

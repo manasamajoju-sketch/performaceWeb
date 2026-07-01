@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useChartInteraction } from "../chart-utils";
 import styles from "./LapAnalysis.module.scss";
 import type {
   SessionGraphProps,
@@ -41,8 +42,6 @@ const DEFAULT_RIGHT_STAT = {
 // edge the tooltip anchors against the bar instead of centering on it.
 const TOOLTIP_EDGE_THRESHOLD = 15;
 
-type TooltipAlign = "left" | "center" | "right";
-
 // Which metric is currently emphasized — toggled by clicking AVG/MAX in the
 // header. null = neutral (both bars full strength).
 type ActiveMetric = "avg" | "max" | null;
@@ -57,17 +56,29 @@ export function SessionGraph({
   xAxisEnd = "01:12:00",
   defaultActiveLap = null,
 }: SessionGraphProps) {
-  const [hoveredLap, setHoveredLap] = useState<number | null>(null);
-  const [selectedLap, setSelectedLap] = useState<number | null>(
-    defaultActiveLap,
-  );
   const [activeMetric, setActiveMetric] = useState<ActiveMetric>(null);
 
   const total = lapData.length;
-  const activeLap = hoveredLap ?? selectedLap;
+  const {
+    setHoveredIndex,
+    setSelectedIndex,
+    activeIndex,
+    activePct,
+    tooltipAlign,
+  } = useChartInteraction({
+    total,
+    playbackMs: 0,
+    playing: false,
+    totalMs: 0,
+    edgeThreshold: TOOLTIP_EDGE_THRESHOLD,
+    allowCenterAlign: true,
+    defaultSelectedIndex: defaultActiveLap,
+  });
+
+  const activeLap = activeIndex;
 
   const handleBarClick = (i: number) =>
-    setSelectedLap((prev) => (prev === i ? null : i));
+    setSelectedIndex((prev) => (prev === i ? null : i));
 
   // Clicking AVG fades the teal (accel) bars; clicking MAX reverses it and
   // fades the dark (decel) bars instead. Clicking the active one again
@@ -77,18 +88,6 @@ export function SessionGraph({
 
   const accelFaded = activeMetric === "avg";
   const decelFaded = activeMetric === "max";
-
-  const activeLapPct =
-    activeLap !== null ? ((activeLap + 0.5) / total) * 100 : null;
-
-  let tooltipAlign: TooltipAlign = "center";
-  if (activeLapPct !== null) {
-    if (activeLapPct <= TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = "left";
-    } else if (activeLapPct >= 100 - TOOLTIP_EDGE_THRESHOLD) {
-      tooltipAlign = "right";
-    }
-  }
 
   const tooltipAlignClass =
     tooltipAlign === "left"
@@ -180,8 +179,8 @@ export function SessionGraph({
                 <div
                   key={i}
                   className={styles.barCol}
-                  onMouseEnter={() => setHoveredLap(i)}
-                  onMouseLeave={() => setHoveredLap(null)}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   onClick={() => handleBarClick(i)}
                 >
                   {/* Two independent side-by-side bars, both anchored to
@@ -201,18 +200,18 @@ export function SessionGraph({
           </div>
 
           {/* Vertical guide line through the active lap */}
-          {activeLapPct !== null && (
+          {activePct !== null && (
             <div
               className={styles.lapIndicator}
-              style={{ left: `${activeLapPct}%` }}
+              style={{ left: `${activePct}%` }}
             />
           )}
 
           {/* Tooltip */}
-          {activeLap !== null && activeLapPct !== null && (
+          {activeLap !== null && activePct !== null && (
             <div
               className={`${styles.tooltip} ${tooltipAlignClass}`}
-              style={{ left: `${activeLapPct}%` }}
+              style={{ left: `${activePct}%` }}
             >
               <div className={styles.tooltipTitle}>Lap {activeLap + 1}</div>
               <div className={styles.tooltipRow}>

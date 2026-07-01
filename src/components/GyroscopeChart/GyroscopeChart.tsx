@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { useChartInteraction } from '../chart-utils'
 import styles from './GyroscopeChart.module.scss'
 import type { GyroscopeChartProps, AxisDataPoint } from './GyroscopeChart.types'
 
@@ -30,9 +31,21 @@ export function GyroscopeChart({
   playing = false,
   totalMs = 0,
 }: GyroscopeChartProps) {
-  const [hovered, setHovered] = useState<number | null>(null)
   const [dims, setDims] = useState({ width: 0, height: 0 })
   const areaRef = useRef<HTMLDivElement>(null)
+  const total = data.length
+  const {
+    hoveredIndex,
+    setHoveredIndex,
+    playbackIndex,
+  } = useChartInteraction({
+    total,
+    playbackMs,
+    playing,
+    totalMs,
+    edgeThreshold: 15,
+    allowCenterAlign: false,
+  })
 
   useEffect(() => {
     const el = areaRef.current
@@ -46,14 +59,7 @@ export function GyroscopeChart({
     return () => ro.disconnect()
   }, [])
 
-  const total = data.length
   const range = yMax - yMin
-  
-  // Calculate playback index
-  const isPlaying = playing || playbackMs > 0;
-  const pbIdx = isPlaying && totalMs > 0
-    ? Math.min(Math.round((playbackMs / totalMs) * (total - 1)), total - 1)
-    : null;
 
   const xFor = (i: number) => (dims.width > 0 ? (i / (total - 1)) * dims.width : 0)
   const yFor = (val: number) =>
@@ -121,17 +127,17 @@ export function GyroscopeChart({
               <path d={buildPath('y')} fill="none" className={styles.lineGreen} strokeWidth={2} />
               <path d={buildPath('z')} fill="none" className={styles.linePurple} strokeWidth={2} />
 
-              {hovered !== null && (
+              {hoveredIndex !== null && (
                 <line
-                  x1={xFor(hovered)} y1={0} x2={xFor(hovered)} y2={dims.height}
+                  x1={xFor(hoveredIndex)} y1={0} x2={xFor(hoveredIndex)} y2={dims.height}
                   className={styles.hoverLine}
                 />
               )}
               
               {/* Playback cursor line */}
-              {pbIdx !== null && (
+              {playbackIndex !== null && (
                 <line
-                  x1={xFor(pbIdx)} y1={0} x2={xFor(pbIdx)} y2={dims.height}
+                  x1={xFor(playbackIndex)} y1={0} x2={xFor(playbackIndex)} y2={dims.height}
                   className={styles.playbackLine}
                   strokeWidth={2}
                   stroke="rgba(100, 200, 255, 0.8)"
@@ -146,22 +152,22 @@ export function GyroscopeChart({
                   width={dims.width / total}
                   height={dims.height}
                   fill="transparent"
-                  onMouseEnter={() => setHovered(i)}
-                  onMouseLeave={() => setHovered(null)}
+                  onMouseEnter={() => setHoveredIndex(i)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                 />
               ))}
             </svg>
           )}
 
-          {hovered !== null && (
+          {hoveredIndex !== null && (
             <div
               className={`${styles.tooltip} ${styles.tooltipAlignRight}`}
-              style={{ left: `${(hovered / (total - 1)) * 100}%` }}
+              style={{ left: `${(hoveredIndex / (total - 1)) * 100}%` }}
             >
-              <div className={styles.tooltipTitle}>Point {hovered + 1}</div>
-              <div className={styles.tooltipCyan}>X: {data[hovered].x.toFixed(1)}</div>
-              <div className={styles.tooltipGreen}>Y: {data[hovered].y.toFixed(1)}</div>
-              <div className={styles.tooltipPurple}>Z: {data[hovered].z.toFixed(1)}</div>
+              <div className={styles.tooltipTitle}>Point {hoveredIndex + 1}</div>
+              <div className={styles.tooltipCyan}>X: {data[hoveredIndex].x.toFixed(1)}</div>
+              <div className={styles.tooltipGreen}>Y: {data[hoveredIndex].y.toFixed(1)}</div>
+              <div className={styles.tooltipPurple}>Z: {data[hoveredIndex].z.toFixed(1)}</div>
             </div>
           )}
         </div>
